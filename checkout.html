@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Secure Checkout</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #66bb6a, transparent);
+      filter: blur(130px);
+      opacity: .25;
+      top: -120px;
+      right: -120px;
+      z-index: -1;
+    }
+
+    .checkout-container {
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 12px 40px rgba(67,160,71,0.18);
+      width: 100%;
+      max-width: 540px;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      padding: 24px 20px;
+      text-align: center;
+      position: relative;
+    }
+
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      margin: 0;
+      letter-spacing: .5px;
+    }
+
+    .header p {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-top: 6px;
+    }
+
+    .content {
+      padding: 28px 24px;
+    }
+
+    .amount-info {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .amount-info h2 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: var(--dark-green);
+      margin: 0;
+    }
+
+    .amount-info p {
+      font-size: 1.1rem;
+      color: #6b8e6b;
+      margin-top: 4px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 28px;
+      border-bottom: 2px solid #e8f5e9;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 14px;
+      text-align: center;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #6b8e6b;
+      position: relative;
+    }
+
+    .tab.active {
+      color: var(--dark-green);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #4a704a;
+      font-size: 0.95rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid #dcedc8;
+      border-radius: 16px;
+      font-size: 1rem;
+      background: #fafffa;
+      transition: all 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(67,160,71,0.15);
+    }
+
+    input.card-number {
+      letter-spacing: 2px;
+      font-family: monospace;
+    }
+
+    .card-logos {
+      display: flex;
+      gap: 16px;
+      margin: 12px 0 20px;
+    }
+
+    .card-logos img {
+      height: 36px;
+      opacity: 0.9;
+    }
+
+    .pay-btn, .submit-otp-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 28px 0 20px;
+      box-shadow: 0 6px 20px rgba(67,160,71,0.3);
+      transition: all 0.3s;
+      display: none;
+    }
+
+    .pay-btn:hover, .submit-otp-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(67,160,71,0.4);
+    }
+
+    .back-link {
+      text-align: center;
+      color: var(--dark-green);
+      font-weight: 500;
+      cursor: pointer;
+      margin: 20px 0;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .back-link:hover { color: var(--primary); }
+
+    .security-note {
+      margin-top: 40px;
+      font-size: 0.85rem;
+      color: #6b8e6b;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .security-badges {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    .security-badges img {
+      height: 44px;
+      opacity: 0.9;
+    }
+
+    #otp-section {
+      display: none;
+      text-align: center;
+      margin: 40px 0 20px;
+    }
+
+    #otp-section h3 {
+      color: var(--dark-green);
+      margin-bottom: 16px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+    }
+
+    .otp-input {
+      font-size: 2rem;
+      text-align: center;
+      letter-spacing: 16px;
+      padding: 16px;
+      width: 240px;
+      margin: 0 auto 24px;
+      border: 2px solid #dcedc8;
+      border-radius: 16px;
+      background: #fafffa;
+    }
+
+    #success-popup {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 48px 32px;
+      border-radius: 28px;
+      text-align: center;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      animation: popIn 0.5s ease-out;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .popup-content h2 {
+      color: var(--dark-green);
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      margin-bottom: 16px;
+    }
+
+    .popup-content p {
+      font-size: 1.1rem;
+      color: #4a704a;
+      margin-bottom: 24px;
+    }
+
+    .popup-content button {
+      padding: 16px 48px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .popup-content button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(67,160,71,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="checkout-container">
+    <div class="header">
+      <h1>Greentech Secure Checkout 🌿</h1>
+      <p id="ref-no">Reference No: —</p>
+    </div>
+
+    <div class="content">
+      <div class="amount-info">
+        <h2 id="display-total">₹0.00</h2>
+        <p>Ready to grow your garden?</p>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" data-tab="cards">CARDS</div>
+        <div class="tab" data-tab="netbanking">NET BANKING</div>
+      </div>
+
+      <div id="cards-form">
+        <div class="form-group">
+          <label>Pay securely with</label>
+          <div class="card-logos">
+            <img src="https://th.bing.com/th/id/R.c4bd375e38d9eec842b9cd15607e233b?rik=tjfQjNxx3oDeiw&riu=http%3a%2f%2fwww.pngall.com%2fwp-content%2fuploads%2f2017%2f05%2fVisa-Logo-PNG-Pic.png&ehk=O33wwbB4SPc1LVGwdSL3x34n85yvh1H9EpA76fLNQgQ%3d&risl=&pid=ImgRaw&r=0" alt="Visa">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/1200px-MasterCard_Logo.svg.png" alt="MasterCard">
+            <img src="https://www.electronicpaymentsinternational.com/wp-content/uploads/sites/4/2021/11/1280px-Rupay-Logo.png" alt="RuPay">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Card Type</label>
+          <select id="card-type-select">
+            <option value="">-- Select --</option>
+            <option value="credit">Credit Card</option>
+            <option value="debit">Debit Card</option>
+          </select>
+        </div>
+
+        <div id="credit-card-fields" style="display:none;">
+          <div class="form-group">
+            <label>Cardholder Name</label>
+            <input type="text" id="cardholder-name" placeholder="Name as on card">
+          </div>
+          <div class="form-group">
+            <label>Card Number</label>
+            <input type="text" id="card-number" class="card-number" maxlength="19" placeholder="0000 0000 0000 0000">
+          </div>
+          <div class="form-group">
+            <label>Expiry (MM/YY)</label>
+            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+          </div>
+          <div class="form-group">
+            <label>CVV</label>
+            <input type="text" id="cvv" maxlength="3" placeholder="•••" inputmode="numeric">
+          </div>
+        </div>
+
+        <div id="maestro-note" style="display:none;" class="form-group">
+          <label style="color:#e53935;">Note: For Maestro cards, expiry & CVV optional – proceed if not available.</label>
+        </div>
+      </div>
+
+      <div id="netbanking-form" style="display:none;">
+        <div class="form-group">
+          <label>Select Your Bank</label>
+          <select id="bank-select">
+            <option value="">-- Select Bank --</option>
+            <option>State Bank of India</option>
+            <option>HDFC Bank</option>
+            <option>ICICI Bank</option>
+            <option>Axis Bank</option>
+            <option>Kotak Mahindra Bank</option>
+            <option>Punjab National Bank</option>
+            <option>Bank of Baroda</option>
+            <option>Canara Bank</option>
+            <option>Union Bank of India</option>
+            <option>IndusInd Bank</option>
+            <option>IDBI Bank</option>
+            <option>Yes Bank</option>
+            <option>Federal Bank</option>
+            <option>UCO Bank</option>
+            <option>Bank of India</option>
+            <option>Central Bank of India</option>
+            <option>Indian Overseas Bank</option>
+            <option>South Indian Bank</option>
+            <option>Standard Chartered</option>
+          </select>
+        </div>
+
+       <div id="account-group" class="form-group" style="display:none;">
+        <label>Account Number (12 digits)</label>
+          <input type="tel" inputmode="numeric" pattern="[0-9]*" id="account-num" maxlength="12" placeholder="Enter 12-digit account number">
+      </div>
+    </div>
+
+<button id="pay-btn" class="pay-btn">PAY SECURELY NOW</button>
+
+      <div id="otp-section">
+        <h3>Verify Your Payment</h3>
+        <p>A 6-digit OTP sent to your registered mobile/email</p>
+        <input type="tel" inputmode="numeric" pattern="[0-9]*" id="otp-input" class="otp-input" maxlength="6" placeholder="______">
+        <button id="submit-otp-btn" class="submit-otp-btn">CONFIRM PAYMENT</button>
+      </div>
+
+      <div class="back-link" onclick="window.location.href='marketplace.html'">← Back to FlorMart</div>
+
+      <div class="security-note">
+        Your payment is protected with 2048-bit SSL encryption.<br>
+        Greentech never stores your card details.
+      </div>
+
+      <div class="security-badges">
+        <img src="https://th.bing.com/th/id/R.c4bd375e38d9eec842b9cd15607e233b?rik=tjfQjNxx3oDeiw&riu=http%3a%2f%2fwww.pngall.com%2fwp-content%2fuploads%2f2017%2f05%2fVisa-Logo-PNG-Pic.png&ehk=O33wwbB4SPc1LVGwdSL3x34n85yvh1H9EpA76fLNQgQ%3d&risl=&pid=ImgRaw&r=0" alt="Visa">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/1200px-MasterCard_Logo.svg.png" alt="MasterCard">
+        <img src="https://www.electronicpaymentsinternational.com/wp-content/uploads/sites/4/2021/11/1280px-Rupay-Logo.png" alt="RuPay">
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Celebration Popup -->
+  <div id="success-popup">
+    <div class="popup-content">
+      <h2>Payment Successful! 🌱✨</h2>
+      <p>Thank you for supporting local green thumbs.<br>
+         Reference No: <strong id="success-ref"></strong><br>
+         Your plants are on their way! 🪴</p>
+      <button onclick="window.location.href='marketplace.html'">Continue Shopping</button>
+    </div>
+  </div>
+
+  <script>
+
+      // CVV: Restrict to digits only and limit to 3 characters
+      document.getElementById('cvv').addEventListener('input', e => {
+      // Replace anything that isn't a digit with an empty string
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+      // Trigger the button check
+      checkPaymentReady();
+    });
+    
+    // Reference Number
+    const refNo = Math.floor(Math.random() * 9000000) + 1000000;
+    document.getElementById('ref-no').textContent = `Reference No: ${refNo}`;
+    document.getElementById('success-ref').textContent = refNo;
+
+    // Load amount
+    const savedTotal = localStorage.getItem('checkoutTotal');
+    let checkoutAmount = savedTotal ? parseFloat(savedTotal) : 0;
+    document.getElementById('display-total').textContent = 
+      checkoutAmount > 0 ? `₹${checkoutAmount.toLocaleString('en-IN')}` : '₹0.00';
+
+    // DOM Elements
+    const tabs = document.querySelectorAll('.tab');
+    const cardsForm = document.getElementById('cards-form');
+    const netbankingForm = document.getElementById('netbanking-form');
+    const payBtn = document.getElementById('pay-btn');
+    const otpSection = document.getElementById('otp-section');
+    const otpInput = document.getElementById('otp-input');
+    const submitOtpBtn = document.getElementById('submit-otp-btn');
+    const successPopup = document.getElementById('success-popup');
+
+    const cardTypeSelect = document.getElementById('card-type-select');
+    const creditCardFields = document.getElementById('credit-card-fields');
+    const maestroNote = document.getElementById('maestro-note');
+
+    // 1. Get references to the new elements
+    const bankSelect = document.getElementById('bank-select');
+    const accountGroup = document.getElementById('account-group');
+    const accountNumInput = document.getElementById('account-num');
+    let currentMode = 'cards';
+
+    // 2. Make the account field appear when a bank is chosen
+    bankSelect.addEventListener('change', () => {
+    if (bankSelect.value !== "") {
+      accountGroup.style.display = 'block'; // This shows the hidden 12-digit field
+    } else {
+      accountGroup.style.display = 'none';
+    }
+    checkPaymentReady();
+  });
+
+  // 3. Monitor the 12-digit input
+  accountNumInput.addEventListener('input', (e) => {
+  // Clean input to allow only numbers
+  e.target.value = e.target.value.replace(/\D/g, '').slice(0, 12);
+    checkPaymentReady();
+  });
+
+    
+
+    // Tab Switching
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentMode = tab.dataset.tab;
+
+        cardsForm.style.display = currentMode === 'cards' ? 'block' : 'none';
+        netbankingForm.style.display = currentMode === 'netbanking' ? 'block' : 'none';
+
+        payBtn.style.display = 'none';
+        otpSection.style.display = 'none';
+      });
+    });
+
+    // Card Type Change
+    cardTypeSelect.addEventListener('change', () => {
+      if (cardTypeSelect.value === 'credit') {
+        creditCardFields.style.display = 'block';
+        maestroNote.style.display = 'none';
+      } else if (cardTypeSelect.value === 'debit') {
+        creditCardFields.style.display = 'none';
+        maestroNote.style.display = 'block';
+      } else {
+        creditCardFields.style.display = 'none';
+        maestroNote.style.display = 'none';
+      }
+      checkPaymentReady();
+    });
+
+    // Card Number Formatting
+    document.getElementById('card-number').addEventListener('input', e => {
+      let v = e.target.value.replace(/\D/g, '').slice(0,16);
+      e.target.value = v.match(/.{1,4}/g)?.join(' ') || v;
+      checkPaymentReady();
+    });
+
+    // Updated Expiry Formatting and Validation (MM/YY)
+document.getElementById('expiry').addEventListener('input', e => {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+  if (v.length >= 2) {
+    // Prevent months > 12
+    let month = parseInt(v.slice(0, 2));
+    if (month > 12) v = '12' + v.slice(2);
+    if (month === 0) v = '01' + v.slice(2);
+    
+    v = v.slice(0, 2) + '/' + v.slice(2);
+  }
+  e.target.value = v;
+  checkPaymentReady(); // Ensure button updates on every keystroke
+});
+
+// Helper function to validate if date is in the future
+function isExpiryValid(value) {
+  if (value.length !== 5) return false;
+  
+  const [inputMonth, inputYear] = value.split('/').map(num => parseInt(num));
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1; // JS months are 0-11
+  const currentYear = parseInt(now.getFullYear().toString().slice(-2)); // Get last 2 digits
+
+  if (inputYear < currentYear) return false;
+  if (inputYear === currentYear && inputMonth < currentMonth) return false;
+  
+  return inputMonth >= 1 && inputMonth <= 12;
+}
+
+function checkPaymentReady() {
+  let ready = false;
+
+  if (currentMode === 'cards') {
+    const isCredit = cardTypeSelect.value === 'credit';
+    const name = document.getElementById('cardholder-name').value.trim();
+    const num = document.getElementById('card-number').value.replace(/\D/g, '');
+    const expiry = document.getElementById('expiry').value;
+    const cvv = document.getElementById('cvv').value;
+
+    ready = (isCredit && name.length >= 2 && num.length === 16 && isExpiryValid(expiry) && cvv.length >= 3) ||
+            (!isCredit && cardTypeSelect.value === 'debit');
+            
+  } else if (currentMode === 'netbanking') {
+    // Logic: If bank is selected AND account is exactly 12 digits, show the PAY button
+    ready = (bankSelect.value !== "") && (accountNumInput.value.length === 12);
+  }
+
+  // Show or hide the "PAY SECURELY NOW" button
+  payBtn.style.display = ready ? 'block' : 'none';
+}
+
+    // Listen for input changes
+    ['cardholder-name', 'card-number', 'expiry', 'cvv'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', checkPaymentReady);
+    });
+
+    // PAY → OTP
+    payBtn.addEventListener('click', () => {
+      document.querySelector('.tabs').style.display = 'none';
+      cardsForm.style.display = 'none';
+      netbankingForm.style.display = 'none';
+      payBtn.style.display = 'none';
+      otpSection.style.display = 'block';
+      otpInput.focus();
+    });
+
+    // OTP input → show submit
+    otpInput.addEventListener('input', e => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0,6);
+      submitOtpBtn.style.display = e.target.value.length === 6 ? 'block' : 'none';
+    });
+
+
+  // Submit OTP → Success & Clear Cart
+submitOtpBtn.addEventListener('click', () => {
+  if (otpInput.value.length === 6) {
+    // 1. Show the success UI
+    successPopup.style.display = 'flex';
+
+    // 2. The "Nuclear Clear": This hits every possible cart key name
+    // Replace 'greentechCart' with 'FloraMartCart' if that's what you named it!
+    const cartKeys = ['greentechCart', 'floraCart', 'cart', 'checkoutTotal'];
+    
+    cartKeys.forEach(key => localStorage.removeItem(key));
+
+    // 3. Handle User-Specific Carts
+    // If your marketplace code uses 'currentUser', we clear that too
+    if (typeof currentUser !== 'undefined') {
+        localStorage.removeItem('greentechCart_' + currentUser);
+        localStorage.removeItem('floraCart_' + currentUser);
+    } else {
+        // If currentUser isn't defined, try to clear all keys starting with 'greentech'
+        for (let key in localStorage) {
+            if (key.includes('Cart')) {
+                localStorage.removeItem(key);
+            }
+        }
+    }
+
+    console.log("Cleanup complete. Redirecting to an empty state.");
+  }
+});
+
+    // Close success popup
+    successPopup.addEventListener('click', e => {
+      if (e.target === successPopup) successPopup.style.display = 'none';
+    });
+
+    // Initial check
+    checkPaymentReady();
+  </script>
+</body>
+</html>

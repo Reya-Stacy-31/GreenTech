@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Garden Analytics</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #66bb6a, transparent);
+      filter: blur(130px);
+      opacity: .25;
+      top: -120px;
+      right: -120px;
+      z-index: -1;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 20px;
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      box-shadow: 0 8px 24px rgba(46,125,50,.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .back-btn {
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover { transform: scale(1.15); }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin: 0;
+      flex: 1;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .overview {
+      background: white;
+      border-radius: 28px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 32px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+
+    .overview h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      color: var(--dark-green);
+      margin-bottom: 8px;
+    }
+
+    .hero-stat {
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 12px 0;
+    }
+
+    .overview p {
+      font-size: 1.05rem;
+      color: #6b8e6b;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 24px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+      transition: 0.35s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(67,160,71,0.2);
+    }
+
+    .stat-icon {
+      font-size: 2.6rem;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark-green);
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.95rem;
+      color: #6b8e6b;
+    }
+
+    .chart-container {
+      background: white;
+      border-radius: 28px;
+      padding: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 10px 32px rgba(0,0,0,0.08);
+    }
+
+    .chart-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--dark-green);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .bar-chart {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      height: 240px;
+      padding: 20px 0;
+    }
+
+    .bar {
+      width: 44px;
+      background: linear-gradient(180deg, var(--primary), var(--secondary));
+      border-radius: 10px 10px 0 0;
+      position: relative;
+      transition: height 1.2s ease;
+    }
+
+    .bar-label {
+      position: absolute;
+      top: -34px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.9rem;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .month-labels {
+      display: flex;
+      justify-content: space-around;
+      font-size: 0.92rem;
+      color: #6b8e6b;
+      margin-top: 12px;
+    }
+
+    .progress-section {
+      margin: 40px 0;
+    }
+
+    .progress-item {
+      margin-bottom: 24px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: #4a704a;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: #e8f5e9;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 1.5s ease;
+    }
+
+    .top-plants {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .plant-rank {
+      background: white;
+      border-radius: 20px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      transition: 0.3s;
+    }
+
+    .plant-rank:hover { transform: translateY(-6px); }
+
+    .plant-rank i {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .btn-back {
+      width: 100%;
+      padding: 16px;
+      background: #757575;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 32px;
+      transition: 0.3s;
+    }
+
+    .btn-back:hover {
+      background: var(--dark-green);
+      transform: translateY(-3px);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 440px;
+      background: white;
+      border-radius: 30px;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      box-shadow: 0 14px 38px rgba(0,0,0,.14);
+      z-index: 100;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #6b8e6b;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: .3s;
+      flex: 1;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover { transform: translateY(-5px); color: var(--dark-green); }
+
+    .nav-item.active { color: var(--dark-green); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="back-btn" onclick="window.location.href='profile.html'">
+      <i class="fas fa-arrow-left"></i>
+    </div>
+    <h1>Garden Analytics</h1>
+  </header>
+
+  <div class="container">
+
+    <div class="overview">
+      <h2>Your 2026 Garden Story</h2>
+      <div class="hero-stat">₹6,720 Saved</div>
+      <p>Growing smarter, greener, and cheaper at home</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="fas fa-rupee-sign stat-icon"></i>
+        <div class="stat-value">₹6,720</div>
+        <div class="stat-label">Money Saved</div>
+        <small>vs market prices</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-cloud stat-icon"></i>
+        <div class="stat-value">58 kg</div>
+        <div class="stat-label">CO₂ Reduced</div>
+        <small>This year</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-leaf stat-icon"></i>
+        <div class="stat-value">45 kg</div>
+        <div class="stat-label">Oxygen Produced</div>
+        <small>≈ 3 mature trees</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-tint stat-icon"></i>
+        <div class="stat-value">520 L</div>
+        <div class="stat-label">Water Saved</div>
+        <small>Smart reminders</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-shopping-bag stat-icon"></i>
+        <div class="stat-value">₹3,450</div>
+        <div class="stat-label">Harvest Value</div>
+        <small>Tomatoes, Basil, Spinach, Mint</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-medal stat-icon"></i>
+        <div class="stat-value">Level 8</div>
+        <div class="stat-label">GreenGuardian</div>
+        <small>Top 12% in Hyderabad</small>
+      </div>
+    </div>
+
+    <!-- Monthly Harvest Trend -->
+    <div class="chart-container">
+      <div class="chart-title">Monthly Harvest & Savings (2026)</div>
+      <div class="bar-chart">
+        <div class="bar" style="height:35%;"><span class="bar-label">₹380</span></div>
+        <div class="bar" style="height:48%;"><span class="bar-label">₹520</span></div>
+        <div class="bar" style="height:65%;"><span class="bar-label">₹710</span></div>
+        <div class="bar" style="height:82%;"><span class="bar-label">₹890</span></div>
+        <div class="bar" style="height:100%;"><span class="bar-label">₹1,080</span></div>
+        <div class="bar" style="height:92%;"><span class="bar-label">₹990</span></div>
+        <div class="bar" style="height:70%;"><span class="bar-label">₹760</span></div>
+      </div>
+      <div class="month-labels">
+        <div>Jan</div><div>Feb</div><div>Mar</div><div>Apr</div><div>May</div><div>Jun</div><div>Jul</div>
+      </div>
+    </div>
+
+    <!-- Plant Health Trends -->
+    <div class="chart-container progress-section">
+      <div class="chart-title">Plant Health Trends</div>
+      <div class="progress-item">
+        <div class="progress-label">
+          <span>Monstera Deliciosa</span>
+          <span>92%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:92%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label">
+          <span>Thai Basil</span>
+          <span>88%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:88%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label">
+          <span>Snake Plant</span>
+          <span>95%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:95%"></div></div>
+      </div>
+      <div class="progress-item">
+        <div class="progress-label">
+          <span>Tomato Plants</span>
+          <span>78%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div>
+      </div>
+    </div>
+
+    <!-- Top Performing Plants -->
+    <div class="chart-container">
+      <div class="chart-title">Your Top Performers</div>
+      <div class="top-plants">
+        <div class="plant-rank">
+          <i class="fas fa-crown"></i>
+          <h3>Monstera</h3>
+          <p>Most Resilient</p>
+        </div>
+        <div class="plant-rank">
+          <i class="fas fa-trophy"></i>
+          <h3>Thai Basil</h3>
+          <p>Highest Yield</p>
+        </div>
+        <div class="plant-rank">
+          <i class="fas fa-star"></i>
+          <h3>Snake Plant</h3>
+          <p>Lowest Maintenance</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison & Export -->
+    <div class="chart-container" style="text-align:center; padding:32px 20px;">
+      <h3 style="color:var(--dark-green); margin-bottom:16px;">You're beating the average Hyderabad gardener!</h3>
+      <p style="font-size:1.1rem; color:#4a704a;">+42% more savings • +31% less water used</p>
+      <button onclick="alert('Exporting your 2026 garden report... 📊')" class="btn-back" style="margin-top:24px; background:var(--primary);">
+        Export Full Report (CSV/PDF)
+      </button>
+    </div>
+
+    <button class="btn-back" onclick="window.location.href='profile.html'">
+      Back to Profile
+    </button>
+
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fas fa-home"></i>Home</a>
+    <a href="my-plants.html" class="nav-item"><i class="fas fa-leaf"></i>My Plants</a>
+    <a href="community.html" class="nav-item"><i class="fas fa-users"></i>Community</a>
+    <a href="marketplace.html" class="nav-item"><i class="fas fa-store"></i>Marketplace</a>
+    <div class="nav-item active"><i class="fas fa-user-circle"></i>Profile</div>
+  </nav>
+
+</body>
+</html>

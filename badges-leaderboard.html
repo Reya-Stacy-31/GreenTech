@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Badges & Leaderboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+      --gold: #ffd700;
+    }
+
+    * { 
+      margin:0; 
+      padding:0; 
+      box-sizing:border-box; 
+      -webkit-tap-highlight-color: transparent; 
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      padding-bottom: 110px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      padding: 30px 20px;
+      border-radius: 0 0 35px 35px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(46,125,50,.3);
+      position: relative;
+    }
+
+    .back-arrow {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .back-arrow:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--dark-green);
+      margin: 40px 0 20px;
+      text-align: center;
+    }
+
+    .podium-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 15px;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 30px;
+    }
+
+    .podium-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .podium-avatar {
+      width: 75px;
+      height: 75px;
+      background: white;
+      border-radius: 50%;
+      border: 4px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .rank-1 .podium-avatar {
+      width: 110px;
+      height: 110px;
+      border-color: var(--gold);
+      font-size: 3rem;
+      animation: winner-glow 2s infinite alternate;
+    }
+
+    @keyframes winner-glow {
+      from { box-shadow: 0 0 10px var(--gold); }
+      to { box-shadow: 0 0 25px var(--gold); }
+    }
+
+    .podium-base {
+      width: 100%;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      margin-top: 15px;
+      padding: 15px 5px;
+      text-align: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .rank-1 .podium-base { height: 130px; background: var(--dark-green); }
+    .rank-2 .podium-base { height: 90px; background: var(--primary); }
+    .rank-3 .podium-base { height: 70px; background: var(--secondary); }
+
+    .podium-name { font-size: 0.9rem; display: block; margin-bottom: 5px; }
+    .podium-prize { font-size: 0.65rem; background: rgba(0,0,0,0.2); padding: 3px 6px; border-radius: 10px; }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 30px;
+      padding: 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .badge-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .badge-circle {
+      width: 120px; 
+      height: 120px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      border: 6px solid var(--accent);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+      position: relative;
+    }
+
+    .unlocked .badge-circle { 
+      border-color: var(--primary); 
+      animation: float 4s ease-in-out infinite; 
+    }
+
+    .locked .badge-circle { 
+      filter: grayscale(1) opacity(0.5); 
+      border-style: dashed; 
+    }
+
+    .badge-name {
+      margin-top: 15px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--dark-green);
+    }
+
+    .badge-task {
+      font-size: 0.75rem;
+      color: #666;
+      max-width: 130px;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    .prize-pill {
+      margin-top: 10px;
+      background: #fff9c4;
+      color: #f57f17;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 10px 25px;
+      border-radius: 50px;
+      border: none;
+      background: #ddd;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .tab-btn.active { 
+      background: var(--dark-green); 
+      color: white; 
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 450px;
+      background: white;
+      border-radius: 50px;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      flex: 1;
+      color: #8fa896;
+    }
+
+    .nav-item i {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+
+    .nav-item span {
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .nav-item.active {
+      color: var(--dark-green);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <!-- Functional Back Arrow -->
+    <i class="fas fa-arrow-left back-arrow" onclick="window.history.back()"></i>
+    <h1>Garden Legend 🌿</h1>
+    <p>Reya Stacy • Top 1% in District</p>
+  </header>
+
+  <div class="container">
+    
+    <h2 class="section-title">Hall of Fame</h2>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchPodium('district', this)">Our District</button>
+      <button class="tab-btn" onclick="switchPodium('global', this)">Global Community</button>
+    </div>
+    
+    <div class="podium-container" id="podium-wrap">
+      <div class="podium-item rank-2">
+        <div class="podium-avatar" onclick="pop(this)">🌸</div>
+        <div class="podium-base">
+          <span class="podium-name">Aarav</span>
+          <span class="podium-prize">🎁 Organic Compost</span>
+        </div>
+      </div>
+      <div class="podium-item rank-1">
+        <div class="podium-avatar" onclick="pop(this)">🪴</div>
+        <div class="podium-base">
+          <span class="podium-name">Reya Stacy</span>
+          <span class="podium-prize">👑 Golden Shovel</span>
+        </div>
+      </div>
+      <div class="podium-item rank-3">
+        <div class="podium-avatar" onclick="pop(this)">🍃</div>
+        <div class="podium-base">
+          <span class="podium-name">Meera</span>
+          <span class="podium-prize">🎁 Seed Box</span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Trophy Garden</h2>
+
+    <div class="badges-grid">
+      <div class="badge-card unlocked" onclick="pop(this)">
+        <div class="badge-circle">🌱</div>
+        <span class="badge-name">Seed Sprout</span>
+        <span class="badge-task">Planted your first 5 seeds!</span>
+        <div class="prize-pill">Awarded: 10xp</div>
+      </div>
+
+      <div class="badge-card locked" onclick="showUnlock('Water Warrior', 'Water your garden for 10 days straight!', 'Real Prize: Spray Bottle Accessory')">
+        <div class="badge-circle">💧</div>
+        <span class="badge-name">Water Warrior</span>
+        <span class="badge-task">Maintain a 10-day streak</span>
+        <div class="prize-pill">Prize: Spray Bottle</div>
+      </div>
+
+      <div class="badge-card unlocked" onclick="pop(this)">
+        <div class="badge-circle">📸</div>
+        <span class="badge-name">Plant Snapper</span>
+        <span class="badge-task">Uploaded 20 progress photos</span>
+        <div class="prize-pill">Awarded: Profile Frame</div>
+      </div>
+
+      <div class="badge-card locked" onclick="showUnlock('Sun Seeker', 'Find the brightest spot for 5 plants.', 'Real Prize: 15% Grow Light Discount')">
+        <div class="badge-circle">🌞</div>
+        <span class="badge-name">Sun Seeker</span>
+        <span class="badge-task">Optimize sunlight exposure</span>
+        <div class="prize-pill">Prize: 15% Coupon</div>
+      </div>
+
+      <div class="badge-card locked" onclick="showUnlock('Repot Master', 'Successfully repot 3 plants into bigger pots.', 'Real Prize: Ceramic Pot Voucher')">
+        <div class="badge-circle">🪴</div>
+        <span class="badge-name">Repot Master</span>
+        <span class="badge-task">Help 3 plants expand</span>
+        <div class="prize-pill">Prize: Ceramic Pot</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Functional Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="my-plants.html" class="nav-item">
+      <i class="fas fa-leaf"></i>
+      <span>My Plants</span>
+    </a>
+    <a href="community.html" class="nav-item">
+      <i class="fas fa-users"></i>
+      <span>Community</span>
+    </a>
+    <a href="marketplace.html" class="nav-item">
+      <i class="fas fa-shopping-basket"></i>
+      <span>FloraMart</span>
+    </a>
+    <a href="profile.html" class="nav-item active">
+      <i class="fas fa-user-circle"></i>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <script>
+    function pop(el) {
+      const rect = el.getBoundingClientRect();
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { 
+          x: (rect.left + rect.width / 2) / window.innerWidth, 
+          y: (rect.top + rect.height / 2) / window.innerHeight 
+        },
+        colors: ['#43a047', '#ffd700', '#ffffff', '#66bb6a']
+      });
+    }
+
+    function showUnlock(name, goal, prize) {
+      if (confirm(`🔓 Unlock Challenge:\n\n${name}\n\nTask: ${goal}\n\nPrize: ${prize}\n\nDo you want to work on this challenge?`)) {
+        alert("Great! Keep gardening consistently to unlock this badge 🌱");
+      }
+    }
+
+    function switchPodium(type, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      const podium = document.getElementById('podium-wrap');
+      
+      if(type === 'global') {
+        podium.innerHTML = `
+          <div class="podium-item rank-2">
+            <div class="podium-avatar" onclick="pop(this)">👨‍🌾</div>
+            <div class="podium-base">
+              <span class="podium-name">Joe Farm</span>
+              <span class="podium-prize">🎁 Tool Set</span>
+            </div>
+          </div>
+          <div class="podium-item rank-1">
+            <div class="podium-avatar" onclick="pop(this)">👑</div>
+            <div class="podium-base">
+              <span class="podium-name">Green King</span>
+              <span class="podium-prize">👑 $100 Voucher</span>
+            </div>
+          </div>
+          <div class="podium-item rank-3">
+            <div class="podium-avatar" onclick="pop(this)">🌻</div>
+            <div class="podium-base">
+              <span class="podium-name">Reya Stacy</span>
+              <span class="podium-prize">🎁 Rare Sapling</span>
+            </div>
+          </div>
+        `;
+      } else {
+        // Reset to district view
+        location.reload();
+      }
+    }
+  </script>
+
+</body>
+</html>

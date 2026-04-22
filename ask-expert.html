@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Expert Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #66bb6a, transparent);
+      filter: blur(130px);
+      opacity: .25;
+      top: -120px;
+      right: -120px;
+      z-index: -1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 20px;
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      box-shadow: 0 8px 24px rgba(46,125,50,.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-content {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .greeting h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      letter-spacing: .4px;
+      margin: 0;
+    }
+
+    .greeting p {
+      font-size: 0.95rem;
+      opacity: 0.92;
+      margin-top: 3px;
+    }
+
+    .logout-header-btn {
+      background: rgba(255,255,255,0.28);
+      border: 1px solid rgba(255,255,255,0.45);
+      backdrop-filter: blur(10px);
+      padding: 10px 16px;
+      border-radius: 28px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.3s;
+    }
+
+    .logout-header-btn:hover {
+      background: rgba(255,255,255,0.45);
+      transform: translateY(-2px);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 30px;
+      padding: 2rem 5%;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .expert-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #1b331b;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .service-card {
+      background: white;
+      padding: 1.2rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      cursor: pointer;
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: 0.3s;
+    }
+
+    .service-card:hover {
+      border-color: var(--primary);
+      transform: translateX(5px);
+    }
+
+    .service-card i {
+      color: var(--primary);
+      font-size: 1.4rem;
+    }
+
+    .status-tracker {
+      background: white;
+      border-radius: 20px;
+      padding: 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .query-item {
+      padding: 12px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: 0.2s;
+      margin-bottom: 5px;
+    }
+
+    .query-item:hover {
+      background: #f9fff9;
+    }
+
+    .query-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .query-plant {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #2e4d2e;
+    }
+
+    .status-badge {
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .status-pending { background: #fff3e0; color: #ef6c00; }
+    .status-replied { background: #e8f5e9; color: #2e7d32; }
+
+    .content-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .inline-form-container {
+      background: white;
+      border-radius: 28px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+      display: none;
+      border: 2px solid #eef5ee;
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+      width: 100%;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #4a6b4a;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1.5px solid #f0f0f0;
+      background: #fafafa;
+      font-family: inherit;
+    }
+
+    .expert-info-panel {
+      background: #f0f9f0;
+      border: 1px dashed #4CAF50;
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      width: 100%;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #f0f3f0;
+      color: #666;
+    }
+
+    #expertImgPreview {
+      width: 100%;
+      height: 160px;
+      border-radius: 16px;
+      object-fit: cover;
+      display: none;
+      margin-bottom: 12px;
+      border: 2px solid #4CAF50;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 440px;
+      background: white;
+      border-radius: 30px;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      box-shadow: 0 14px 38px rgba(0,0,0,.14);
+      z-index: 100;
+    }
+
+    /* .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0 25px;
+      border-top: 1px solid #eee;
+      z-index: 100;
+    } */
+
+    .nav-item {
+      text-align: center;
+      color: #8e8e8e;
+      font-size: 0.7rem;
+      cursor: pointer;
+      flex: 1;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .nav-item.active {
+      color: #4CAF50;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem 16px;
+      }
+      header {
+        border-radius: 0 0 20px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="greeting">
+        <h1 id="greetingText">Welcome Back! 🌿</h1>
+        <p>Expert Care for your Plants</p>
+      </div>
+      <button class="logout-header-btn" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <div class="main-grid">
+    <aside class="expert-sidebar">
+      <h2 class="section-title">Expert Services</h2>
+      <div class="service-card" id="cardRegister">
+        <i class="fas fa-user-md"></i>
+        <h3>Register as Expert</h3>
+      </div>
+      <div class="service-card" id="cardAsk">
+        <i class="fas fa-comment-medical"></i>
+        <h3>Ask Expert</h3>
+      </div>
+
+      <h2 class="section-title" style="margin-top: 15px;">Query Tracker</h2>
+      <div class="status-tracker" id="queryTrackerList">
+        <p style="font-size: 0.8rem; color: #999; text-align: center; padding: 20px;">No queries found.</p>
+      </div>
+    </aside>
+
+    <main class="content-center">
+      <div id="expertContentArea">
+        <div id="askFormContainer" class="inline-form-container">
+          <h2 style="font-family: 'Playfair Display', serif; color: #1b5e20; margin-bottom: 1.5rem;">New Inquiry</h2>
+          <div class="form-group">
+            <label>Select Expert</label>
+            <select id="expertSelect">
+              <option value="">-- Choose an Expert --</option>
+            </select>
+          </div>
+          <div id="expertDetailPanel" class="expert-info-panel" style="display:none;">
+            <p style="font-size:0.85rem;">
+              <strong>Qual:</strong> <span id="detQual"></span> | 
+              <strong>Exp:</strong> <span id="detExp"></span> yrs
+            </p>
+            <p style="font-size:0.85rem;">
+              <strong>Fee:</strong> <span id="detFee"></span> | 
+              <strong>Mob:</strong> <span id="detMob"></span>
+            </p>
+          </div>
+          <form id="expertForm">
+            <div class="form-group">
+              <label>Plant Photo</label>
+              <img id="expertImgPreview" src="" alt="Preview">
+              <input type="file" id="expertPhoto" accept="image/*" required>
+            </div>
+            <div class="form-group">
+              <label>Plant History</label>
+              <textarea id="plantHistory" placeholder="Age, sunlight, water schedule..." required></textarea>
+            </div>
+            <div class="form-group">
+              <label>Problem</label>
+              <textarea id="plantProblem" placeholder="Describe the issue..." required></textarea>
+            </div>
+            <div class="form-group">
+              <label>Expected Solution</label>
+              <input type="text" id="expectedSolution" placeholder="e.g. Organic treatment" required>
+            </div>
+            <div class="btn-group">
+              <button type="submit" class="btn btn-primary">Send to Expert</button>
+              <button type="button" class="btn btn-secondary" onclick="closeForms()">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="regFormContainer" class="inline-form-container">
+          <h2 style="font-family: 'Playfair Display', serif; color: #1b5e20; margin-bottom: 1.5rem;">Join as Expert</h2>
+          <form id="registerExpertForm">
+            <div class="form-group"><label>Full Name</label><input type="text" id="regName" required></div>
+            <div class="form-group"><label>Mobile (10 Digits)</label><input type="tel" id="regMob" maxlength="10" placeholder="9876543210" required></div>
+            <div class="form-group"><label>Qualification</label><input type="text" id="regQual" required></div>
+            <div class="form-group"><label>Experience (Years)</label><input type="number" id="regExp" required></div>
+            <div class="form-group"><label>Fee Details</label><input type="text" id="regFee" placeholder="e.g. ₹500/call" required></div>
+            <button type="submit" class="btn btn-primary" style="width:100%">Complete Registration</button>
+            <button type="button" class="btn btn-secondary" style="width:100%; margin-top:10px;" onclick="closeForms()">Cancel</button>
+          </form>
+        </div>
+
+        <div id="queryDetailContainer" class="inline-form-container">
+          <div id="queryDetailContent"></div>
+          <button type="button" class="btn btn-secondary" style="width:100%; margin-top:20px;" onclick="closeForms()">Close</button>
+        </div>
+
+        <div id="placeholderText" style="margin-top: 80px; text-align: center; color: #ccc;">
+          <i class="fas fa-leaf" style="font-size: 3rem; margin-bottom: 15px; display: block;"></i>
+          <p>Choose a service from the left sidebar</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fas fa-home"></i>Home</a>
+    <a href="my-plants.html" class="nav-item"><i class="fas fa-leaf"></i>MyPlants</a>
+    <a href="community.html" class="nav-item"><i class="fas fa-users"></i>Community</a>
+    <a href="marketplace.html" class="nav-item"><i class="fas fa-shopping-basket"></i>FloraMart</a>
+    <a href="profile.html" class="nav-item"><i class="fas fa-user-circle"></i>Profile</a>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB8VCNt8j5j8CTVpAKx6JP_KL7sC2-zuTI",
+      authDomain: "prasad-prasad.firebaseapp.com",
+      projectId: "prasad-prasad",
+      appId: "1:717181544551:web:0780889ae05aa41bbe0cc2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentExperts = [];
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const username = user.displayName || user.email.split('@')[0];
+        const hour = new Date().getHours();
+        let timeGreet = hour < 12 ? "Good Morning" : (hour < 17 ? "Good Afternoon" : "Good Evening");
+
+        document.getElementById('greetingText').textContent = `${timeGreet}, ${username}! 🌿`;
+        
+        loadTracker(user.uid);
+        loadExperts();
+      } else { 
+        window.location.href = "index.html"; 
+      }
+    });
+
+    async function loadTracker(uid) {
+      try {
+        const q = query(collection(db, "expert_queries"), where("userId", "==", uid), orderBy("timestamp", "desc"));
+        const snap = await getDocs(q);
+        const tracker = document.getElementById('queryTrackerList');
+        tracker.innerHTML = snap.empty ? '<p style="font-size:0.8rem;color:#999;text-align:center;padding:20px;">No queries found.</p>' : '';
+        
+        snap.forEach(doc => {
+          const d = doc.data();
+          const hasReply = !!d.expertReply;
+          const item = document.createElement('div');
+          item.className = 'query-item';
+          item.innerHTML = `
+            <div class="query-header">
+              <span class="query-plant">${d.plantName}</span>
+              <span class="status-badge ${hasReply ? 'status-replied' : 'status-pending'}">${hasReply ? 'Replied' : 'Pending'}</span>
+            </div>
+            <small style="color:#888;">Expert: ${d.expertName}</small>
+          `;
+          item.onclick = () => showDetail(d);
+          tracker.appendChild(item);
+        });
+      } catch (e) { console.error("Loading error:", e); }
+    }
+
+    function showDetail(data) {
+      closeForms();
+      document.getElementById('placeholderText').style.display = 'none';
+      const container = document.getElementById('queryDetailContainer');
+      document.getElementById('queryDetailContent').innerHTML = `
+        <h3 style="color:#1b5e20; margin-bottom:15px;">Conversation Details</h3>
+        <div style="background:#f1f1f1; padding:12px; border-radius:10px; margin-bottom:10px; font-size:0.9rem;">
+          <strong>Plant History & Problem:</strong><br>${data.plantProblem}
+        </div>
+        ${data.expertReply ? `<div style="background:#e8f5e9; padding:12px; border-radius:10px; border-left:4px solid #4CAF50; font-size:0.9rem;">
+          <strong>Expert Advice:</strong><br>${data.expertReply}
+        </div>` : `<p style="font-size:0.8rem; color:#999; text-align:center;">Expert response pending...</p>`}
+      `;
+      container.style.display = 'block';
+    }
+
+    async function loadExperts() {
+      const snap = await getDocs(collection(db, "experts_list"));
+      const select = document.getElementById('expertSelect');
+      select.innerHTML = '<option value="">-- Choose an Expert --</option>';
+      currentExperts = [];
+      snap.forEach(doc => {
+        const d = doc.data();
+        currentExperts.push({ id: doc.id, ...d });
+        const opt = document.createElement('option');
+        opt.value = doc.id; opt.textContent = d.name;
+        select.appendChild(opt);
+      });
+    }
+
+    document.getElementById('expertSelect').onchange = (e) => {
+      const exp = currentExperts.find(x => x.id === e.target.value);
+      const panel = document.getElementById('expertDetailPanel');
+      if (exp) {
+        document.getElementById('detQual').textContent = exp.qualification;
+        document.getElementById('detExp').textContent = exp.experience;
+        document.getElementById('detFee').textContent = exp.fee;
+        document.getElementById('detMob').textContent = exp.mobile;
+        panel.style.display = 'block';
+      } else { panel.style.display = 'none'; }
+    };
+
+    window.closeForms = () => {
+      document.querySelectorAll('.inline-form-container').forEach(f => f.style.display = 'none');
+      document.getElementById('placeholderText').style.display = 'block';
+    };
+
+    document.getElementById('cardAsk').onclick = () => { 
+      closeForms(); 
+      document.getElementById('placeholderText').style.display = 'none'; 
+      document.getElementById('askFormContainer').style.display = 'block'; 
+    };
+
+    document.getElementById('cardRegister').onclick = () => { 
+      closeForms(); 
+      document.getElementById('placeholderText').style.display = 'none'; 
+      document.getElementById('regFormContainer').style.display = 'block'; 
+    };
+
+    document.getElementById('expertPhoto').onchange = (e) => {
+      const [file] = e.target.files;
+      if (file) {
+        const preview = document.getElementById('expertImgPreview');
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+      }
+    };
+
+    document.getElementById('registerExpertForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const mob = document.getElementById('regMob').value;
+      if (!/^[0-9]{10}$/.test(mob)) return alert("Mobile must be 10 digits");
+      
+      await addDoc(collection(db, "experts_list"), {
+        name: document.getElementById('regName').value,
+        mobile: mob,
+        qualification: document.getElementById('regQual').value,
+        experience: document.getElementById('regExp').value,
+        fee: document.getElementById('regFee').value,
+        uid: auth.currentUser.uid
+      });
+      alert("Expert registered successfully!");
+      closeForms();
+      loadExperts();
+    };
+
+    document.getElementById('expertForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const select = document.getElementById('expertSelect');
+      await addDoc(collection(db, "expert_queries"), {
+        userId: auth.currentUser.uid,
+        expertName: select.options[select.selectedIndex].text,
+        plantName: document.getElementById('plantHistory').value.substring(0, 15) + "...",
+        plantProblem: document.getElementById('plantProblem').value,
+        timestamp: new Date(),
+        expertReply: null
+      });
+      alert("Inquiry Sent! Watch the tracker on the left.");
+      closeForms();
+      loadTracker(auth.currentUser.uid);
+    };
+
+    document.getElementById('logoutBtn').onclick = () => signOut(auth);
+  </script>
+</body>
+</html>

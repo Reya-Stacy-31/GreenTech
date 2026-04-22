@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Community</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="icon" href="favicon.ico">
+  <style>
+    /* Challenge Card Specific Styling */
+    .challenge-card {
+      background: white;
+      border-radius: 24px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.07);
+      margin-bottom: 20px;
+      border: 1px solid #f0f7f0;
+    }
+
+    .challenge-card h2 {
+      color: var(--dark-green);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    .challenge-card p {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .btn-join {
+      background-color: #66bb6a;
+      color: white;
+      border: none;
+      padding: 12px 0;
+      width: 100%;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-join:hover {
+      background-color: var(--primary);
+    }
+
+    /* Member Card Styling */
+    .member-card {
+      background: white;
+      border-radius: 20px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border: 1px solid #f0f7f0;
+    }
+
+    .member-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .avatar {
+      width: 52px; 
+      height: 52px; 
+      border-radius: 50%; 
+      background: var(--accent);
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      color: white;
+      font-weight: bold; 
+      font-size: 1.45rem;
+    }
+
+    .member-details h4 {
+      margin: 0;
+      font-size: 1.06rem;
+      color: var(--dark-green);
+    }
+
+    .member-details small {
+      color: #6b8e6b;
+      font-size: 0.86rem;
+    }
+
+    .follow-btn {
+      padding: 8px 22px;
+      border-radius: 50px;
+      border: 1.5px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.87rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .follow-btn.following {
+      background: #e8f5e9;
+      border-color: #a5d6a7;
+      color: #2e7d32;
+    }
+
+    /* Weather Pill Styles */
+    .weather-pill {
+      background: rgba(255,255,255,0.28);
+      border: 1px solid rgba(255,255,255,0.45);
+      backdrop-filter: blur(10px);
+      padding: 10px 16px;
+      border-radius: 28px;
+      font-size: 0.9rem;
+      text-align: right;
+      min-width: 140px;
+      color: white;
+    }
+
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 20px;
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      box-shadow: 0 8px 24px rgba(46,125,50,.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      letter-spacing: .4px;
+    }
+
+    .header-left p {
+      font-size: 0.95rem;
+      opacity: 0.92;
+      margin-top: 3px;
+    }
+
+    .tabs { 
+      display: flex; 
+      overflow-x: auto; 
+      background: rgba(255,255,255,0.8); 
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(163,214,167,0.3); 
+      position: sticky; 
+      top: 70px; 
+      z-index: 9; 
+      padding: 12px 20px; 
+      gap: 12px; 
+    }
+
+    .tab {
+      padding: 10px 18px; 
+      border-radius: 50px; 
+      background: white; 
+      border: 1px solid #dcedc8;
+      font-size: 0.92rem; 
+      color: #4a704a; 
+      cursor: pointer; 
+      white-space: nowrap;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; 
+      border: none; 
+      font-weight: 500;
+    }
+
+    .feed { 
+      padding: 20px; 
+      max-width: 680px; 
+      margin: 0 auto; 
+    }
+
+    .post-card {
+      background: white; 
+      border-radius: 24px; 
+      overflow: hidden;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.07); 
+      margin-bottom: 24px;
+    }
+
+    .post-header {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #f0f7f0;
+    }
+
+    .avatar {
+      width: 48px; 
+      height: 48px; 
+      border-radius: 50%; 
+      background: var(--accent);
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      color: white;
+      font-weight: bold; 
+      font-size: 1.3rem;
+    }
+
+    .post-meta h4 { 
+      margin: 0; 
+      font-size: 1.05rem; 
+      color: var(--dark-green); 
+    }
+
+    .post-meta small { 
+      color: #6b8e6b; 
+    }
+
+    .post-content { 
+      padding: 16px;
+      font-size: 1.02rem; 
+      line-height: 1.6; 
+    }
+
+    .post-actions {
+      display: flex;
+      border-top: 1px solid #f0f7f0;
+      padding: 12px 16px;
+      gap: 24px;
+    }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.1rem;
+      color: #6b8e6b;
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 50px;
+      transition: all 0.3s;
+    }
+
+    .action-btn:hover {
+      background: #f0f7f0;
+    }
+
+    .modal { 
+      display: none; 
+      position: fixed; 
+      inset: 0; 
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px); 
+      align-items: center; 
+      justify-content: center; 
+      z-index: 500; 
+    }
+
+    .modal-content {
+      width: 90%; 
+      max-width: 480px; 
+      background: white; 
+      border-radius: 28px;
+      padding: 24px; 
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+
+    .close-btn { 
+      float: right; 
+      font-size: 1.6rem; 
+      color: #6b8e6b; 
+      cursor: pointer; 
+    }
+
+    textarea { 
+      width: 100%; 
+      height: 140px; 
+      padding: 14px; 
+      border: 1px solid #dcedc8;
+      border-radius: 16px; 
+      margin: 16px 0; 
+      font-size: 1rem; 
+      resize: vertical; 
+    }
+
+    .btn-post {
+      width: 100%; 
+      padding: 14px; 
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; 
+      border: none; 
+      border-radius: 20px; 
+      font-weight: 600; 
+      font-size: 1.05rem; 
+      cursor: pointer;
+    }
+
+    .option-card {
+      background: white; 
+      border-radius: 24px; 
+      padding: 28px 20px; 
+      text-align: center;
+      margin-bottom: 20px; 
+      box-shadow: 0 10px 24px rgba(0,0,0,0.07); 
+      cursor: pointer;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%;
+      max-width: 400px;
+      background: white;
+      border-radius: 40px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 10px 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: #88a088;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      margin-bottom: 2px;
+    }
+
+    .nav-item.active {
+      color: #38703d;
+    }
+
+    .nav-item:hover {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <h1 id="communityTitle">Community 🌱</h1>
+      <p id="greetingText">Connecting green thumbs...</p>
+    </div>
+    <!-- Weather Module -->
+    <div class="weather-pill">
+      <div id="w-location">Locating...</div>
+      <div id="w-desc">Fetching weather...</div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="foryou">For You</div>
+    <div class="tab" data-tab="following">Following</div>
+    <div class="tab" data-tab="trending">Trending</div>
+    <div class="tab" data-tab="posts">Posts</div>
+    <div class="tab" data-tab="challenges">Challenges</div>
+    <div class="tab" data-tab="members">Members</div>
+  </div>
+
+  <div class="feed" id="feed"></div>
+
+  <div class="fab" id="createPostBtn"><i class="fas fa-plus"></i></div>
+
+  <!-- Public Post Modal -->
+  <div class="modal" id="postModal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeModal">&times;</span>
+      <h2 style="font-family:'Playfair Display',serif; color:var(--dark-green); text-align:center;">Share Your Plant Moment 🌿</h2>
+      <textarea id="postText" placeholder="What's growing today? Share a tip... 🍃"></textarea>
+      <button class="btn-post" id="submitPost">Post to Community</button>
+    </div>
+  </div>
+
+  <!-- Followers Only Modal -->
+  <div class="modal" id="followersModal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeFollowersModal">&times;</span>
+      <h2 style="font-family:'Playfair Display',serif; color:var(--dark-green); text-align:center;">Post to Your Followers Only 🌱</h2>
+      <textarea id="followersPostText" placeholder="Write a message visible only to people who follow you..."></textarea>
+      <button class="btn-post" id="submitFollowersPost">Post to Followers</button>
+    </div>
+  </div>
+
+  <!-- Comment Modal -->
+  <div class="modal" id="commentModal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeCommentModal">&times;</span>
+      <h2 style="font-family:'Playfair Display',serif; color:var(--dark-green); text-align:center;">Write a Comment 💬</h2>
+      <textarea id="commentText" placeholder="Share your thoughts here..."></textarea>
+      <button class="btn-post" id="submitComment">Post Comment</button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fas fa-home"></i>Home</a>
+    <a href="my-plants.html" class="nav-item"><i class="fas fa-leaf"></i>My Plants</a>
+    <div class="nav-item active"><i class="fas fa-users"></i>Community</div>
+    <a href="marketplace.html" class="nav-item"><i class="fas fa-shopping-basket"></i>FloraMart</a>
+    <a href="profile.html" class="nav-item"><i class="fas fa-user-circle"></i>Profile</a>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      getDocs, 
+      addDoc, 
+      query, 
+      where, 
+      doc, 
+      setDoc, 
+      deleteDoc,
+      serverTimestamp,
+      increment 
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB8VCNt8j5j8CTVpAKx6JP_KL7sC2-zuTI",
+      authDomain: "prasad-prasad.firebaseapp.com",
+      projectId: "prasad-prasad",
+      appId: "1:717181544551:web:0780889ae05aa41bbe0cc2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const feed = document.getElementById('feed');
+    let currentUser = null;
+    let currentCommentPostId = null;
+
+    const postModal = document.getElementById('postModal');
+    const followersModal = document.getElementById('followersModal');
+    const commentModal = document.getElementById('commentModal');
+    const createPostBtn = document.getElementById('createPostBtn');
+
+    // Weather API Key
+    const weatherKey = "6edc49354ce2f5aaf2ab30e37d42c25e";
+
+    // Modal Controls
+    createPostBtn.onclick = () => postModal.style.display = 'flex';
+    document.getElementById('closeModal').onclick = () => postModal.style.display = 'none';
+    document.getElementById('closeFollowersModal').onclick = () => followersModal.style.display = 'none';
+    document.getElementById('closeCommentModal').onclick = () => commentModal.style.display = 'none';
+
+    window.onclick = (e) => {
+      if (e.target === postModal) postModal.style.display = 'none';
+      if (e.target === followersModal) followersModal.style.display = 'none';
+      if (e.target === commentModal) commentModal.style.display = 'none';
+    };
+
+    // ====================== WEATHER MODULE ======================
+    async function updateWeather() {
+      if (!navigator.geolocation) {
+        document.getElementById('w-location').textContent = "Location not supported";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        try {
+          const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&appid=${weatherKey}&units=metric`);
+          const data = await res.json();
+
+          document.getElementById('w-location').textContent = `${data.name} • ${Math.round(data.main.temp)}°C`;
+          document.getElementById('w-desc').textContent = data.weather[0].description.charAt(0).toUpperCase() + data.weather[0].description.slice(1);
+        } catch (err) {
+          console.error("Weather error:", err);
+          document.getElementById('w-desc').textContent = "Weather unavailable";
+        }
+      }, () => {
+        document.getElementById('w-location').textContent = "Location denied";
+      });
+    }
+
+    // ====================== PUBLIC POST ======================
+    document.getElementById('submitPost').onclick = async () => {
+      const text = document.getElementById('postText').value.trim();
+      if (!text || !currentUser) return alert("Please write something!");
+
+      try {
+        await addDoc(collection(db, "communities", "GreenTech_Community", "posts"), {
+          authorId: currentUser.uid,
+          authorName: currentUser.displayName || currentUser.email?.split('@')[0] || "Green Friend",
+          content: text,
+          type: "public",
+          likes: 0,
+          comments: 0,
+          timestamp: Date.now()
+        });
+        alert("✅ Public post shared!");
+        document.getElementById('postText').value = '';
+        postModal.style.display = 'none';
+        loadForYouFeed();
+      } catch (err) {
+        console.error(err);
+        alert("Failed to post.");
+      }
+    };
+
+    // ====================== FOLLOWERS ONLY POST ======================
+    document.getElementById('submitFollowersPost').onclick = async () => {
+      const text = document.getElementById('followersPostText').value.trim();
+      if (!text || !currentUser) return alert("Please write a message!");
+
+      try {
+        await addDoc(collection(db, "communities", "GreenTech_Community", "posts"), {
+          authorId: currentUser.uid,
+          authorName: currentUser.displayName || currentUser.email?.split('@')[0] || "Green Friend",
+          content: text,
+          type: "followers_only",
+          likes: 0,
+          comments: 0,
+          timestamp: Date.now()
+        });
+        alert("✅ Posted to your followers only! 🌿");
+        document.getElementById('followersPostText').value = '';
+        followersModal.style.display = 'none';
+      } catch (err) {
+        console.error(err);
+        alert("Failed to post to followers.");
+      }
+    };
+
+    // ====================== LIKE POST ======================
+    window.likePost = async (postId) => {
+      try {
+        const postRef = doc(db, "communities", "GreenTech_Community", "posts", postId);
+        await setDoc(postRef, { likes: increment(1) }, { merge: true });
+        alert("❤️ Liked!");
+        loadCurrentTab();
+      } catch (err) {
+        console.error(err);
+        alert("Could not like post.");
+      }
+    };
+
+    // ====================== OPEN COMMENT ======================
+    window.openCommentModal = (postId) => {
+      currentCommentPostId = postId;
+      document.getElementById('commentText').value = '';
+      commentModal.style.display = 'flex';
+    };
+
+    // ====================== SUBMIT COMMENT ======================
+    document.getElementById('submitComment').onclick = async () => {
+      const text = document.getElementById('commentText').value.trim();
+      if (!text || !currentCommentPostId) return alert("Please write a comment!");
+
+      try {
+        await addDoc(collection(db, "communities", "GreenTech_Community", "posts", currentCommentPostId, "comments"), {
+          authorName: currentUser?.displayName || "User",
+          content: text,
+          timestamp: Date.now()
+        });
+
+        const postRef = doc(db, "communities", "GreenTech_Community", "posts", currentCommentPostId);
+        await setDoc(postRef, { comments: increment(1) }, { merge: true });
+
+        alert("✅ Comment posted!");
+        commentModal.style.display = 'none';
+        loadCurrentTab();
+      } catch (err) {
+        console.error(err);
+        alert("Failed to post comment.");
+      }
+    };
+
+    // ====================== FOR YOU FEED ======================
+    async function loadForYouFeed() {
+      feed.innerHTML = "<p style='text-align:center; padding:40px;'>Loading posts... 🌱</p>";
+      try {
+        const q = query(collection(db, "communities", "GreenTech_Community", "posts"), where("type", "==", "public"));
+        const snapshot = await getDocs(q);
+        let html = '';
+
+        if (snapshot.empty) {
+          html = `<div class="post-card" style="padding:60px; text-align:center; color:#6b8e6b;">No public posts yet.</div>`;
+        } else {
+          snapshot.forEach(docSnap => {
+            const p = docSnap.data();
+            const id = docSnap.id;
+            html += `
+              <div class="post-card">
+                <div class="post-header">
+                  <div class="avatar">${(p.authorName || 'G').charAt(0).toUpperCase()}</div>
+                  <div class="post-meta">
+                    <h4>${p.authorName || 'Green Friend'}</h4>
+                    <small>Public</small>
+                  </div>
+                </div>
+                <div class="post-content">${p.content}</div>
+                <div class="post-actions">
+                  <div class="action-btn" onclick="likePost('${id}')">❤️ <span>${p.likes || 0}</span></div>
+                  <div class="action-btn" onclick="openCommentModal('${id}')">💬 <span>${p.comments || 0}</span></div>
+                </div>
+              </div>`;
+          });
+        }
+        feed.innerHTML = html;
+      } catch (e) {
+        console.error(e);
+        feed.innerHTML = `<div class="post-card" style="padding:40px;text-align:center;color:red;">Error loading posts.</div>`;
+      }
+    }
+
+    // ====================== TRENDING FEED ======================
+    async function loadTrendingFeed() {
+      feed.innerHTML = "<p style='text-align:center; padding:40px;'>Loading trending posts... 🔥</p>";
+      try {
+        const q = query(collection(db, "communities", "GreenTech_Community", "posts"));
+        const snapshot = await getDocs(q);
+
+        let posts = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const engagement = (data.likes || 0) + (data.comments || 0);
+          posts.push({ id: docSnap.id, ...data, engagement });
+        });
+
+        posts.sort((a, b) => b.engagement - a.engagement);
+        const topPosts = posts.slice(0, 5);
+
+        let html = '';
+        if (topPosts.length === 0) {
+          html = `<div class="post-card" style="padding:60px; text-align:center; color:#6b8e6b;">No trending posts yet.</div>`;
+        } else {
+          topPosts.forEach(p => {
+            const postId = p.id;
+            html += `
+              <div class="post-card">
+                <div class="post-header">
+                  <div class="avatar">${(p.authorName || 'G').charAt(0).toUpperCase()}</div>
+                  <div class="post-meta">
+                    <h4>${p.authorName || 'Green Friend'}</h4>
+                    <small>Trending • ${p.engagement} engagements</small>
+                  </div>
+                </div>
+                <div class="post-content">${p.content}</div>
+                <div class="post-actions">
+                  <div class="action-btn" onclick="likePost('${postId}')">❤️ <span>${p.likes || 0}</span></div>
+                  <div class="action-btn" onclick="openCommentModal('${postId}')">💬 <span>${p.comments || 0}</span></div>
+                </div>
+              </div>`;
+          });
+        }
+        feed.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        feed.innerHTML = `<div class="post-card" style="padding:40px;text-align:center;color:#e53935;">Error loading trending posts.</div>`;
+      }
+    }
+
+    // ====================== FOLLOWING FEED ======================
+    async function loadFollowingFeed() {
+      feed.innerHTML = "<p style='text-align:center; padding:40px;'>Loading your circle's updates... 🌱</p>";
+      if (!currentUser) return;
+
+      try {
+        const followingSnap = await getDocs(collection(db, "communities", "GreenTech_Community", "followers", currentUser.uid, "following"));
+        const followingIds = followingSnap.docs.map(d => d.id);
+
+        if (followingIds.length === 0) {
+          feed.innerHTML = `
+            <div class="post-card" style="padding:60px;text-align:center;color:#6b8e6b;">
+              <p>Your feed is empty.</p>
+              <small>Follow members to see their private posts here! 🌿</small>
+            </div>`;
+          return;
+        }
+
+        const q = query(
+          collection(db, "communities", "GreenTech_Community", "posts"),
+          where("authorId", "in", followingIds),
+          where("type", "==", "followers_only")
+        );
+
+        const snapshot = await getDocs(q);
+        
+        let posts = [];
+        snapshot.forEach(docSnap => {
+          posts.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        
+        posts.sort((a, b) => b.timestamp - a.timestamp);
+
+        let content = '';
+        if (posts.length === 0) {
+          content = `<div class="post-card" style="padding:60px;text-align:center;color:#6b8e6b;">No private updates from your circle.</div>`;
+        } else {
+          posts.forEach(p => {
+            const postId = p.id;
+            content += `
+              <div class="post-card">
+                <div class="post-header">
+                  <div class="avatar">${(p.authorName || 'G').charAt(0).toUpperCase()}</div>
+                  <div class="post-meta">
+                    <h4>${p.authorName || 'Green Friend'}</h4>
+                    <small>👥 Followers Only</small>
+                  </div>
+                </div>
+                <div class="post-content">${p.content}</div>
+                <div class="post-actions">
+                  <div class="action-btn" onclick="likePost('${postId}')">❤️ <span>${p.likes || 0}</span></div>
+                  <div class="action-btn" onclick="openCommentModal('${postId}')">💬 <span>${p.comments || 0}</span></div>
+                </div>
+              </div>`;
+          });
+        }
+        feed.innerHTML = content;
+      } catch (err) {
+        console.error("Following Feed Error:", err);
+        feed.innerHTML = `<div class="post-card" style="padding:40px;text-align:center;color:#e53935;">Error loading feed.</div>`;
+      }
+    }
+
+    // ====================== MEMBERS TAB - CORRECT NAME FETCH ======================
+    async function loadMembers() {
+      feed.innerHTML = "<p style='text-align:center; padding:40px;'>Loading members... 🌱</p>";
+
+      try {
+        const followingSnap = await getDocs(collection(db, "communities", "GreenTech_Community", "followers", currentUser?.uid || "", "following"));
+        const followingIds = followingSnap.docs.map(d => d.id);
+
+        const snapshot = await getDocs(collection(db, "communities", "GreenTech_Community", "members"));
+        let content = "";
+
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          const memberId = docSnap.id;
+
+          if (memberId === currentUser?.uid) return;
+
+          let displayName = data.name || 
+                           data.username || 
+                           data.displayName || 
+                           (data.email ? data.email.split("@")[0] : "GreenTech Member");
+
+          const isFollowing = followingIds.includes(memberId);
+
+          content += `
+            <div class="member-card">
+              <div class="member-info">
+                <div class="avatar">${displayName.charAt(0).toUpperCase()}</div>
+                <div class="member-details">
+                  <h4>${displayName}</h4>
+                  <small>GreenTech Member 🌿</small>
+                </div>
+              </div>
+              <button class="follow-btn ${isFollowing ? 'following' : ''}" 
+                      onclick="toggleFollow('${memberId}', this)">
+                ${isFollowing ? 'Following' : 'Follow'}
+              </button>
+            </div>`;
+        });
+
+        feed.innerHTML = content || "<p style='text-align:center; padding:60px; color:#6b8e6b;'>No other members found 🌿</p>";
+
+      } catch (err) {
+        console.error("Error loading members:", err);
+        feed.innerHTML = `<p style='text-align:center; color:red; padding:40px;'>Failed to load members.</p>`;
+      }
+    }
+
+    window.toggleFollow = async (memberId, btn) => {
+      if (!currentUser) return alert("Please log in first.");
+
+      const isFollowing = btn.classList.contains('following');
+      const followRef = doc(db, "communities", "GreenTech_Community", "followers", currentUser.uid, "following", memberId);
+
+      try {
+        if (isFollowing) {
+          await deleteDoc(followRef);
+          btn.classList.remove('following');
+          btn.textContent = "Follow";
+        } else {
+          await setDoc(followRef, {
+            followedAt: serverTimestamp(),
+            memberName: btn.parentElement.querySelector('h4').textContent.trim()
+          });
+          btn.classList.add('following');
+          btn.textContent = "Following";
+        }
+      } catch (err) {
+        console.error("Error toggling follow:", err);
+        alert("Action failed. Check your database permissions.");
+      }
+    };
+
+    function loadCurrentTab() {
+      const activeTab = document.querySelector('.tab.active')?.dataset.tab;
+      if (activeTab === "foryou") loadForYouFeed();
+      else if (activeTab === "following") loadFollowingFeed();
+      else if (activeTab === "trending") loadTrendingFeed();
+    }
+
+    // ====================== TAB LOADER ======================
+    function loadTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
+
+      if (tab === "foryou") loadForYouFeed();
+      else if (tab === "following") loadFollowingFeed();
+      else if (tab === "trending") loadTrendingFeed();
+      else if (tab === "posts") {
+        feed.innerHTML = `
+          <div class="option-card" onclick="postModal.style.display='flex'">
+            <h3>🌍 Community</h3>
+            <p>Share publicly with everyone</p>
+          </div>
+          <div class="option-card" onclick="followersModal.style.display='flex'">
+            <h3>👥 Followers Only</h3>
+            <p>Share privately with your followers</p>
+          </div>`;
+      }
+      else if (tab === "members") loadMembers();
+      else if (tab === "challenges") {
+        feed.innerHTML = `
+          <div class="challenge-card">
+            <h2>30-Day Balcony Bloom Challenge</h2>
+            <p>Post daily progress • Win free seeds + nursery voucher!<br>
+            <strong>147 green thumbs joined</strong></p>
+            <button class="btn-join" onclick="alert('Joined Challenge! 🌿')">Join Challenge</button>
+          </div>
+          
+          <div class="challenge-card" style="opacity: 0.8;">
+            <h2>Urban Jungle Photography</h2>
+            <p>Show off your indoor setup • Ends in 5 days<br>
+            <strong>89 green thumbs joined</strong></p>
+            <button class="btn-join" style="background: #a5d6a7;">Coming Soon</button>
+          </div>`;
+      }
+      else {
+        feed.innerHTML = `<div class="post-card" style="padding:50px;text-align:center;">
+          <p>${tab.charAt(0).toUpperCase() + tab.slice(1)} coming soon...</p>
+        </div>`;
+      }
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => loadTab(tab.dataset.tab));
+    });
+
+    // ====================== AUTH ======================
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        const name = user.displayName || user.email?.split('@')[0] || "Plant Lover";
+
+        document.getElementById('greetingText').textContent = `Good day, ${name}! 🌿`;
+        document.getElementById('communityTitle').textContent = `GreenTech Community 🌱`;
+
+        // Save member data
+        await setDoc(doc(db, "communities", "GreenTech_Community", "members", user.uid), {
+          name: name,
+          email: user.email,
+          username: name,
+          joinedAt: new Date().toISOString(),
+          uid: user.uid
+        }, { merge: true });
+
+        // Load weather and initial tab
+        updateWeather();
+        loadTab('foryou');
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>

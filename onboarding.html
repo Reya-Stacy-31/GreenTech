@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Welcome Onboard 🌿</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #66bb6a, transparent);
+      filter: blur(130px);
+      opacity: .25;
+      top: -120px;
+      right: -120px;
+      z-index: -1;
+    }
+
+    .onboarding {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slides {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.7s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .illustration {
+      width: 240px;
+      height: 240px;
+      margin-bottom: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(76,175,80,0.25);
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .illustration img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      color: var(--dark-green);
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: #424242;
+      max-width: 340px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* Sleek full-width progress bar at bottom */
+    .progress-container {
+      width: 100%;
+      height: 4px; /* thinner */
+      background: rgba(163,214,167,0.25);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 0.6s ease;
+      border-radius: 0 4px 4px 0;
+      box-shadow: 0 0 10px rgba(67,160,71,0.4);
+    }
+
+    .controls {
+      padding: 20px 32px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(163,214,167,0.2);
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      color: var(--dark-green);
+      cursor: pointer;
+      padding: 12px;
+      transition: 0.3s;
+    }
+
+    .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .start-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 14px 44px;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(67,160,71,0.35);
+      transition: all 0.3s;
+      display: none;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(67,160,71,0.45);
+    }
+
+    .skip {
+      color: var(--dark-green);
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .skip:hover { color: var(--primary); }
+
+    @media (max-width: 480px) {
+      .illustration { width: 200px; height: 200px; }
+      h2 { font-size: 2.1rem; }
+      p { font-size: 1rem; max-width: 300px; }
+      .controls { padding: 16px 24px 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="onboarding">
+
+    <div class="slides">
+
+      <!-- Slide 1: Welcome -->
+      <div class="slide active" data-index="0">
+        <div class="illustration">
+          <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80" alt="Lush green plants">
+        </div>
+        <h2>Welcome to Greentech 🌿</h2>
+        <p>Your personal AI-powered companion for growing happier, healthier plants — with love from Hyderabad.</p>
+      </div>
+
+      <!-- Slide 2: Scan Magic -->
+      <div class="slide" data-index="1">
+        <div class="illustration">
+          <img src="https://play-lh.googleusercontent.com/buQCrxFF5Pi_XVK9JswaKf-Hi9CB7dbiMiG4k9YiCaqZTe_pQ0GC6R8PZ62DPpzEmA=w240-h480-rw" alt="AI scanning plant">
+        </div>
+        <h2>Scan & Identify Instantly</h2>
+        <p>Point your camera — get name, care guide, pests, diseases & remedies in seconds. No more guessing!</p>
+      </div>
+
+      <!-- Slide 3: My Plants Dashboard -->
+      <div class="slide" data-index="2">
+        <div class="illustration">
+          <img src="https://cdn.open-pr.com/V/2/V209663505_g.jpg" alt="Plant dashboard">
+        </div>
+        <h2>Your Plants, Organized</h2>
+        <p>Track watering, fertilizing, health & reminders. Never lose a plant again — get personalized care schedules.</p>
+      </div>
+
+      <!-- Slide 4: Community & Experts -->
+      <div class="slide" data-index="3">
+        <div class="illustration">
+          <img src="https://thumbs.dreamstime.com/b/young-group-multiracial-friends-using-mobile-phones-together-outdoor-smiling-female-having-fun-watching-social-media-content-406879625.jpg" alt="Community garden">
+        </div>
+        <h2>Join the Green Community</h2>
+        <p>Share photos, ask experts, swap seeds/cuttings, join challenges — earn eco-points & badges together.</p>
+      </div>
+
+      <!-- Slide 5: Marketplace -->
+      <div class="slide" data-index="4">
+        <div class="illustration">
+          <img src="https://www.westonnurseries.com/wp-content/uploads/2020/03/GardenBenefitsSquare-1.jpeg" alt="Marketplace plants">
+        </div>
+        <h2>Buy, Sell & Barter</h2>
+        <p>Local nurseries, homegrown produce, pots, hydro gear — all in one green marketplace. Support Hyderabad growers!</p>
+      </div>
+
+      <!-- Slide 6: Eco Impact & Gamification -->
+      <div class="slide" data-index="5">
+        <div class="illustration">
+          <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80" alt="Eco impact">
+        </div>
+        <h2>Track Your Eco Impact</h2>
+        <p>See how your plants help the planet — CO₂ absorbed, oxygen produced, water saved — and level up as a GreenGuardian!</p>
+        <button class="start-btn" id="startBtn">Get Started →</button>
+      </div>
+
+    </div>
+
+    <!-- Full-width sleek progress bar at very bottom -->
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Controls positioned just above progress bar -->
+    <div class="controls">
+      <button class="nav-btn" id="prevBtn" disabled><i class="fas fa-chevron-left"></i></button>
+      <span class="skip" id="skipBtn">Skip Intro</span>
+      <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const skipBtn = document.getElementById('skipBtn');
+    const startBtn = document.getElementById('startBtn');
+
+    let current = 0;
+    const totalSlides = slides.length;
+    let autoSlideTimer;
+
+    function updateUI() {
+      const progress = ((current + 1) / totalSlides) * 100;
+      progressBar.style.width = `${progress}%`;
+
+      prevBtn.disabled = current === 0;
+      nextBtn.style.display = current < totalSlides - 1 ? 'block' : 'none';
+      startBtn.style.display = current === totalSlides - 1 ? 'inline-block' : 'none';
+
+      slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    }
+
+    function showSlide(index) {
+      current = Math.max(0, Math.min(totalSlides - 1, index));
+      updateUI();
+
+      clearTimeout(autoSlideTimer);
+      if (current < totalSlides - 1) {
+        autoSlideTimer = setTimeout(() => showSlide(current + 1), 4000);
+      }
+    }
+
+    function goToMain() {
+      window.location.href = "home.html"; // or dashboard.html
+    }
+
+    prevBtn.onclick = () => showSlide(current - 1);
+    nextBtn.onclick = () => showSlide(current + 1);
+    skipBtn.onclick = goToMain;
+    startBtn.onclick = goToMain;
+
+    // Swipe support
+    let touchStartX = 0;
+    document.querySelector('.slides').addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.querySelector('.slides').addEventListener('touchend', e => {
+      const touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 60 && current < totalSlides - 1) showSlide(current + 1);
+      if (touchEndX - touchStartX > 60 && current > 0) showSlide(current - 1);
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') showSlide(current + 1);
+      if (e.key === 'ArrowLeft') showSlide(current - 1);
+    });
+
+    // Start onboarding
+    showSlide(0);
+  </script>
+
+</body>
+</html>

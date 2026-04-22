@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Profile & Settings</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #66bb6a, transparent);
+      filter: blur(130px);
+      opacity: .25;
+      top: -120px;
+      right: -120px;
+      z-index: -1;
+    }
+
+    .profile-header {
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      padding: 28px 20px 60px;
+      text-align: center;
+      position: relative;
+      border-bottom-left-radius: 36px;
+      border-bottom-right-radius: 36px;
+      box-shadow: 0 10px 32px rgba(46,125,50,.35);
+    }
+
+    .avatar-container {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 12px;
+    }
+
+    .avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 5px solid white;
+      object-fit: cover;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    }
+
+    .edit-avatar {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      background: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+
+    .edit-avatar:hover { transform: scale(1.1); }
+
+    .username {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      margin-bottom: 4px;
+    }
+
+    .bio {
+      font-size: 0.92rem;
+      opacity: 0.92;
+      margin-bottom: 16px;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: space-around;
+      background: rgba(255,255,255,0.28);
+      backdrop-filter: blur(10px);
+      border-radius: 22px;
+      padding: 16px 12px;
+      margin: 0 20px -40px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.82rem;
+      opacity: 0.9;
+      margin-top: 4px;
+    }
+
+    .section {
+      padding: 60px 20px 24px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.65rem;
+      color: var(--dark-green);
+      margin-bottom: 18px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 36px rgba(67,160,71,0.18);
+    }
+
+    .stat-card i {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .stat-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark-green);
+      margin: 6px 0 4px;
+    }
+
+    .stat-card p {
+      font-size: 0.9rem;
+      color: #6b8e6b;
+    }
+
+    .menu-list {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+      margin-top: 28px;
+    }
+
+    .menu-item {
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-bottom: 1px solid #f0f5f0;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .menu-item:hover { background: #f8fff8; }
+
+    .menu-item:last-child { border-bottom: none; }
+
+    .menu-icon {
+      font-size: 1.45rem;
+      color: var(--primary);
+      width: 34px;
+      text-align: center;
+    }
+
+    .menu-text {
+      flex: 1;
+      font-size: 1.05rem;
+    }
+
+    .logout-btn {
+      display: block;
+      width: 80%;
+      max-width: 340px;
+      margin: 36px auto 30px;
+      padding: 14px;
+      background: #ef5350;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 5px 16px rgba(239,83,80,0.3);
+      transition: 0.3s;
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(239,83,80,0.4);
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 440px;
+      background: white;
+      border-radius: 30px;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      box-shadow: 0 14px 38px rgba(0,0,0,.14);
+      z-index: 100;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #6b8e6b;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: .3s;
+      flex: 1;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover { transform: translateY(-5px); color: var(--dark-green); }
+
+    .nav-item.active { color: var(--dark-green); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <div class="profile-header">
+    <div class="avatar-container">
+      <img class="avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400" alt="Reya Stacy">
+      <div class="edit-avatar" onclick="alert('Change your avatar soon 🌱')">
+        <i class="fas fa-camera"></i>
+      </div>
+    </div>
+    <div class="username">Reya Stacy Gaddam</div>
+    <div class="bio">@reyagreen • Hyderabad • Plant Lover since 2024</div>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-value">1,680</div>
+        <div class="stat-label">Eco-Points</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">15-day</div>
+        <div class="stat-label">Streak 🌱</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">11</div>
+        <div class="stat-label">Badges</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Your Garden's Impact</div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="fas fa-rupee-sign"></i>
+        <h3>₹6,720</h3>
+        <p>Money Saved</p>
+        <small>vs market prices</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-cloud"></i>
+        <h3>58 kg</h3>
+        <p>CO₂ Reduced</p>
+        <small>This year</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-leaf"></i>
+        <h3>45 kg</h3>
+        <p>Oxygen Produced</p>
+        <small>≈ 3 mature trees</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-tint"></i>
+        <h3>520 L</h3>
+        <p>Water Saved</p>
+        <small>Smart reminders</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-shopping-bag"></i>
+        <h3>₹3,450</h3>
+        <p>Harvest Value</p>
+        <small>Tomatoes, Basil, Spinach, Mint</small>
+      </div>
+      <div class="stat-card">
+        <i class="fas fa-medal"></i>
+        <h3>Level 8</h3>
+        <p>GreenGuardian</p>
+        <small>Community Rank</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Account & Features</div>
+    <div class="menu-list">
+      
+      <div class="menu-item" onclick="window.location.href='garden-stats.html'">
+        <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="menu-text">Garden Analytics</div>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+
+      <!-- Updated Links -->
+      <div class="menu-item" onclick="window.location.href='badges-leaderboard.html'">
+        <div class="menu-icon"><i class="fas fa-medal"></i></div>
+        <div class="menu-text">Badges & Leaderboard</div>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='edit-profile.html'">
+        <div class="menu-icon"><i class="fas fa-user-edit"></i></div>
+        <div class="menu-text">Edit Profile</div>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+
+      <div class="menu-item">
+        <div class="menu-icon"><i class="fas fa-bell"></i></div>
+        <div class="menu-text">Plant Reminders</div>
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="menu-item" onclick="alert('Export your garden data (CSV/JSON) 📤')">
+        <div class="menu-icon"><i class="fas fa-download"></i></div>
+        <div class="menu-text">Export Garden Data</div>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+
+      <div class="menu-item" onclick="alert('Share your garden on Community 📸')">
+        <div class="menu-icon"><i class="fas fa-share-alt"></i></div>
+        <div class="menu-text">Share Your Garden</div>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='privacy-security.html'">
+        <div class="menu-icon"><i class="fas fa-shield-alt"></i></div>
+        <div class="menu-text">Privacy & Security</div>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='help-support.html'">
+        <div class="menu-icon"><i class="fas fa-question-circle"></i></div>
+        <div class="menu-text">Help & Support</div>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+
+    </div>
+  </div>
+
+  <button class="logout-btn" onclick="if(confirm('Log out? Come back soon! 🌿')) alert('Logged out successfully')">
+    Log Out
+  </button>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fas fa-home"></i>Home</a>
+    <a href="my-plants.html" class="nav-item"><i class="fas fa-leaf"></i>My Plants</a>
+    <a href="community.html" class="nav-item"><i class="fas fa-users"></i>Community</a>
+    <a href="marketplace.html" class="nav-item"><i class="fas fa-shopping-basket"></i>FloraMart</a>
+    <div class="nav-item active"><i class="fas fa-user-circle"></i>Profile</div>
+  </nav>
+
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Add New Plant</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, #66bb6a, transparent);
+      filter: blur(130px);
+      opacity: .25;
+      top: -120px;
+      right: -120px;
+      z-index: -1;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 20px;
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      box-shadow: 0 8px 24px rgba(46,125,50,.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .back-btn {
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover { transform: scale(1.15); }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      margin: 0;
+      flex: 1;
+    }
+
+    .form-container {
+      padding: 20px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .section {
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.07);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark-green);
+      font-size: 0.98rem;
+    }
+
+    .required::after {
+      content: " *";
+      color: #e53935;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid #dcedc8;
+      border-radius: 16px;
+      font-size: 1rem;
+      background: #fafffa;
+      transition: all 0.3s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(67,160,71,0.15);
+    }
+
+    .category-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .chip {
+      padding: 10px 18px;
+      background: #f0f5f0;
+      border-radius: 50px;
+      font-size: 0.94rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid #dcedc8;
+    }
+
+    .chip.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+    }
+
+    .image-upload {
+      border: 2px dashed var(--accent);
+      border-radius: 20px;
+      height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      background: #fafffa;
+      transition: all 0.3s;
+    }
+
+    .image-upload:hover {
+      border-color: var(--primary);
+      background: #e8f5e9;
+    }
+
+    .image-upload img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+
+    .image-upload p {
+      color: #6b8e6b;
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 24px;
+      box-shadow: 0 6px 20px rgba(67,160,71,0.3);
+      transition: all 0.3s;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(67,160,71,0.4);
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 220px;
+      background: var(--dark-green);
+      color: white;
+      text-align: center;
+      border-radius: 12px;
+      padding: 10px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 440px;
+      background: white;
+      border-radius: 30px;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      box-shadow: 0 14px 38px rgba(0,0,0,.14);
+      z-index: 100;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #6b8e6b;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: .3s;
+      flex: 1;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover { transform: translateY(-5px); color: var(--dark-green); }
+
+    .nav-item.active { color: var(--dark-green); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="back-btn" onclick="window.location.href='my-plants.html'">
+      <i class="fas fa-arrow-left"></i>
+    </div>
+    <h1>Add New Plant 🌱</h1>
+  </header>
+
+  <div class="form-container">
+
+    <div class="section">
+      <label>Plant Photo <span class="tooltip"><i class="fas fa-info-circle"></i>
+        <span class="tooltiptext">Clear photo helps us identify and give better care tips!</span>
+      </span></label>
+      <div class="image-upload" id="imageUpload">
+        <i class="fas fa-camera" style="font-size:3rem; color:var(--primary); margin-bottom:12px;"></i>
+        <p>Tap to upload or take a photo</p>
+        <input type="file" id="plantImage" accept="image/*" style="display:none;">
+      </div>
+    </div>
+
+    <div class="section">
+      <label class="required">Plant Name</label>
+      <input type="text" id="plantName" placeholder="e.g. Monstera Deliciosa, Snake Plant" required>
+
+      <label>Scientific Name (optional – helps with accurate care)</label>
+      <input type="text" id="scientificName" placeholder="e.g. Monstera deliciosa, Sansevieria trifasciata">
+
+      <label class="required">Common Category</label>
+      <div class="category-chips" id="categoryChips">
+        <div class="chip active" data-value="Indoor">Indoor</div>
+        <div class="chip" data-value="Outdoor">Outdoor</div>
+        <div class="chip" data-value="Herbs">Herbs</div>
+        <div class="chip" data-value="Succulents">Succulents</div>
+        <div class="chip" data-value="Tropical">Tropical</div>
+        <div class="chip" data-value="Flowering">Flowering</div>
+        <div class="chip" data-value="Climber">Climber</div>
+      </div>
+      <input type="text" id="customCategory" placeholder="Or type custom category (e.g. Fruiting)" style="margin-top:12px;">
+    </div>
+
+    <div class="section">
+      <label>Where is it placed?</label>
+      <select id="location">
+        <option value="">Select room/area</option>
+        <option value="Living Room">Living Room</option>
+        <option value="Bedroom">Bedroom</option>
+        <option value="Balcony">Balcony</option>
+        <option value="Kitchen">Kitchen</option>
+        <option value="Bathroom">Bathroom (high humidity)</option>
+        <option value="Office Desk">Office Desk</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label>Light Condition <span class="tooltip"><i class="fas fa-info-circle"></i>
+        <span class="tooltiptext">Observe where you placed it: how much direct sun does it get?</span>
+      </span></label>
+      <select id="light">
+        <option value="">Select light level</option>
+        <option value="Low">Low (mostly shade/indirect, <2 hrs sun)</option>
+        <option value="Medium">Medium (bright indirect, no direct sun)</option>
+        <option value="Bright Indirect">Bright Indirect (near window, no harsh sun)</option>
+        <option value="Partial Sun">Partial Sun (3–6 hrs direct sun)</option>
+        <option value="Full Sun">Full Sun (6+ hrs direct sun)</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <label class="required">Watering Needs</label>
+      <select id="watering" required>
+        <option value="">How often do you think it needs water?</option>
+        <option value="Daily">Daily (keep moist)</option>
+        <option value="Every 2 days">Every 2 days</option>
+        <option value="Every 3-4 days">Every 3–4 days</option>
+        <option value="Weekly">Weekly</option>
+        <option value="When dry">When top 2 inches of soil is dry</option>
+        <option value="Rarely">Rarely (every 2–3 weeks)</option>
+      </select>
+
+      <label>Pot Size (diameter in inches/cm)</label>
+      <input type="text" id="potSize" placeholder="e.g. 6 inches / 15 cm">
+
+      <label>Soil Type</label>
+      <select id="soil">
+        <option value="">Select soil mix</option>
+        <option value="Well-draining potting mix">Well-draining potting mix</option>
+        <option value="Cactus/succulent mix">Cactus & succulent mix</option>
+        <option value="Orchid bark mix">Orchid bark / chunky mix</option>
+        <option value="Garden soil">Garden soil (not recommended indoors)</option>
+        <option value="Hydroponic">Hydroponic / LECA</option>
+        <option value="Custom">Custom (describe in notes)</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <label>Current Plant Health</label>
+      <select id="health">
+        <option value="Healthy">Healthy & Happy 😊</option>
+        <option value="Good">Good (minor issues)</option>
+        <option value="Needs Care">Needs Care (yellow leaves, drooping)</option>
+        <option value="Struggling">Struggling (please help!)</option>
+      </select>
+
+      <label>Any Current Issues? (select all that apply)</label>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin:12px 0;">
+        <label><input type="checkbox" value="Yellow leaves"> Yellow leaves</label>
+        <label><input type="checkbox" value="Brown tips"> Brown tips</label>
+        <label><input type="checkbox" value="Wilting"> Wilting</label>
+        <label><input type="checkbox" value="Pests"> Pests (spider mites, mealybugs)</label>
+        <label><input type="checkbox" value="Slow growth"> Slow/no growth</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <label>Fertilizer Schedule (optional)</label>
+      <select id="fertilizer">
+        <option value="">How often do you fertilize?</option>
+        <option value="Weekly">Weekly (weak solution)</option>
+        <option value="Every 2 weeks">Every 2 weeks</option>
+        <option value="Monthly">Monthly</option>
+        <option value="Rarely">Rarely / never</option>
+        <option value="Organic only">Organic only (compost, neem cake)</option>
+      </select>
+
+      <label>Pruning / Maintenance</label>
+      <select id="pruning">
+        <option value="">How often do you prune?</option>
+        <option value="As needed">As needed (remove dead leaves)</option>
+        <option value="Monthly">Monthly shaping</option>
+        <option value="Rarely">Rarely / never</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <label>Notes & Custom Care Tips</label>
+      <textarea id="notes" rows="5" placeholder="Anything special? e.g. 'Likes misting', 'Bought from Kukatpally market', 'Avoid direct AC', 'Propagating more cuttings'"></textarea>
+    </div>
+
+    <button class="btn-save" id="saveBtn">Save Plant & Start Caring! 🌿</button>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fas fa-home"></i>Home</a>
+    <a href="my-plants.html" class="nav-item active"><i class="fas fa-leaf"></i>My Plants</a>
+    <a href="community.html" class="nav-item"><i class="fas fa-users"></i>Community</a>
+    <a href="marketplace.html" class="nav-item"><i class="fas fa-store"></i>Marketplace</a>
+    <a href="profile.html" class="nav-item"><i class="fas fa-user-circle"></i>Profile</a>
+  </nav>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB8VCNt8j5j8CTVpAKx6JP_KL7sC2-zuTI",
+      authDomain: "prasad-prasad.firebaseapp.com",
+      projectId: "prasad-prasad",
+      appId: "1:717181544551:web:0780889ae05aa41bbe0cc2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let currentUID = null;
+    let plantImageBase64 = "";
+
+    onAuthStateChanged(auth, user => {
+      if (!user) return window.location.href = "index.html";
+      currentUID = user.uid;
+    });
+
+    // Category chip selection
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+
+    // Image upload preview
+    document.getElementById('imageUpload').addEventListener('click', () => {
+      document.getElementById('plantImage').click();
+    });
+
+    document.getElementById('plantImage').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          plantImageBase64 = ev.target.result;
+          const container = document.getElementById('imageUpload');
+          container.innerHTML = `<img src="${plantImageBase64}" alt="Plant Preview">`;
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Save plant
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      if (!currentUID) return alert("Please log in first");
+
+      const name = document.getElementById('plantName').value.trim();
+      if (!name) return alert("Plant name is required 🌱");
+
+      const scientific = document.getElementById('scientificName').value.trim();
+      const category = document.querySelector('.chip.active')?.dataset.value || document.getElementById('customCategory').value.trim() || "Indoor";
+      const location = document.getElementById('location').value;
+      const light = document.getElementById('light').value;
+      const watering = document.getElementById('watering').value;
+      const potSize = document.getElementById('potSize').value;
+      const soil = document.getElementById('soil').value;
+      const health = document.getElementById('health').value;
+      const fertilizer = document.getElementById('fertilizer').value;
+      const pruning = document.getElementById('pruning').value;
+      const notes = document.getElementById('notes').value.trim();
+
+      const image = plantImageBase64 || "https://images.unsplash.com/photo-1614594975525-4e346a2a1d5c?w=400";
+
+      const newPlant = {
+        id: Date.now(),
+        name,
+        scientific,
+        category,
+        location,
+        light,
+        watering,
+        potSize,
+        soil,
+        health,
+        fertilizer,
+        pruning,
+        notes,
+        image,
+        addedOn: new Date().toISOString().split('T')[0],
+        nextWater: "Check in 3 days",
+        lastWatered: new Date().toISOString().split('T')[0]
+      };
+
+      const plants = JSON.parse(localStorage.getItem(`greentechPlants_${currentUID}`) || '[]');
+      plants.push(newPlant);
+      localStorage.setItem(`greentechPlants_${currentUID}`, JSON.stringify(plants));
+
+      alert(`🌿 ${name} has been added to your garden!\n\nWe'll help you take great care of it.`);
+      window.location.href = 'my-plants.html';
+    });
+  </script>
+
+</body>
+</html>

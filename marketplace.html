@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FloraMart 🛒</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #e0f2e9;
+    }
+    .cart-item img {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 14px;
+        border: 2px solid #e8f5e9;
+    }
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #66bb6a, transparent);
+      filter: blur(150px);
+      opacity: .3;
+      top: -150px;
+      right: -150px;
+      z-index: -1;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 20px;
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      box-shadow: 0 10px 30px rgba(46,125,50,.35);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      letter-spacing: .5px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-info {
+      font-size: 1rem;
+      opacity: 0.92;
+      text-align: right;
+    }
+
+    .cart-icon {
+      position: relative;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .cart-icon:hover { transform: scale(1.2) rotate(10deg); }
+
+    .cart-count {
+      position: absolute;
+      top: -12px;
+      right: -16px;
+      background: #e53935;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: bold;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 0 4px rgba(229,57,53,0.4);
+      animation: heartbeat 1.5s infinite ease-in-out;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    .search-bar { padding: 16px 20px; }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 20px 14px 48px;
+      border: none;
+      border-radius: 50px;
+      background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%236b8e6b" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>') no-repeat 16px center;
+      background-size: 20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 10px 28px rgba(67,160,71,0.3);
+      transform: scale(1.02);
+    }
+
+    .section-tabs {
+      display: flex;
+      overflow-x: auto;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(163,214,167,0.3);
+      position: sticky;
+      top: 70px;
+      z-index: 9;
+      padding: 14px 20px;
+      gap: 14px;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      border-radius: 50px;
+      background: white;
+      border: 1px solid #dcedc8;
+      font-size: 0.95rem;
+      color: #4a704a;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+
+    .tab:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(67,160,71,0.2); }
+
+    .tab.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 6px 18px rgba(67,160,71,0.3);
+    }
+
+    .market-container { padding: 24px; max-width: 1280px; margin: 0 auto; }
+
+    .market-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 28px;
+    }
+
+    .market-card {
+      background: white;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+      transition: all 0.4s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .market-card:hover {
+      transform: translateY(-14px) scale(1.03);
+      box-shadow: 0 24px 56px rgba(67,160,71,0.28);
+    }
+
+    .market-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--secondary);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      animation: badgePop 2.2s infinite ease-in-out;
+    }
+
+    @keyframes badgePop {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+
+    .market-img {
+      width: 100%;
+      height: 230px;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+
+    .market-card:hover .market-img { transform: scale(1.1); }
+
+    .market-info { padding: 18px; }
+
+    .market-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--dark-green);
+      margin-bottom: 8px;
+    }
+
+    .market-desc {
+      font-size: 0.94rem;
+      color: #6b8e6b;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .market-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .market-location {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.92rem;
+      color: #5e8c61;
+    }
+
+    .market-actions {
+      padding: 0 18px 18px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s;
+      font-size: 1rem;
+    }
+
+    .btn-buy {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-cart {
+      background: #fffaf0;
+      color: var(--dark-green);
+      border: 2px solid #dcedc8;
+    }
+
+    .btn-cart:hover {
+      background: #e8f5e9;
+      transform: translateY(-4px) scale(1.05);
+      animation: cartPop 0.8s ease;
+    }
+
+    @keyframes cartPop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1.05); }
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 100px;
+      right: 28px;
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      box-shadow: 0 14px 40px rgba(67,160,71,0.45);
+      cursor: pointer;
+      z-index: 200;
+      animation: fabDance 3.2s infinite ease-in-out;
+    }
+
+    .fab:hover {
+      transform: translateY(-10px) scale(1.15);
+      animation-play-state: paused;
+    }
+
+    @keyframes fabDance {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-12px) rotate(5deg); }
+      75% { transform: translateY(-12px) rotate(-5deg); }
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 460px;
+      background: white;
+      border-radius: 32px;
+      display: flex;
+      justify-content: space-around;
+      padding: 14px 0;
+      box-shadow: 0 16px 42px rgba(0,0,0,.16);
+      z-index: 100;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #6b8e6b;
+      font-size: 0.74rem;
+      cursor: pointer;
+      transition: .35s;
+      flex: 1;
+      text-decoration: none;
+    }
+
+    .nav-item i {
+      font-size: 1.7rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover { transform: translateY(-6px); color: var(--dark-green); }
+
+    .nav-item.active { color: var(--dark-green); font-weight: 600; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      width: 90%;
+      max-width: 540px;
+      background: white;
+      border-radius: 32px;
+      padding: 32px;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.3);
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      font-size: 2.4rem;
+      color: #6b8e6b;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .close-btn:hover { color: var(--primary); transform: rotate(90deg); }
+
+    .detail-image {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    .detail-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem;
+      color: var(--dark-green);
+      margin-bottom: 12px;
+    }
+
+    .detail-price {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 12px 0 20px;
+    }
+
+    .detail-desc {
+      line-height: 1.75;
+      color: #444;
+      font-size: 1.02rem;
+    }
+
+    /* Sell Form Styling */
+    .sell-form label {
+      display: block;
+      margin: 18px 0 8px;
+      font-weight: 500;
+      color: var(--dark-green);
+    }
+
+    .sell-form input, .sell-form select, .sell-form textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid #dcedc8;
+      border-radius: 14px;
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .sell-form textarea {
+      height: 140px;
+      resize: vertical;
+    }
+
+    .image-preview {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 16px;
+      margin: 12px 0 20px;
+      display: none;
+      border: 2px dashed var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>FloraMart🛒</h1>
+    <div class="user-info" id="userDisplay">Hey Reya Stacy! Ready to grow your garden? 💚</div>
+    <div class="cart-icon" onclick="showCartModal()">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-count" id="cartCount">0</span>
+    </div>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" class="search-input" placeholder="Search seeds, pots, herbs, hydro gear... 🔍" id="searchInput">
+  </div>
+
+  <div class="section-tabs">
+    <div class="tab active" data-section="community">Community Sales</div>
+    <div class="tab" data-section="nursery">Nearby Nurseries</div>
+    <div class="tab" data-section="ads">Hot Deals 🔥</div>
+    <div class="tab" data-section="hydro">Hydroponics 💧</div>
+    <div class="tab" data-section="barter">Barter Zone 🔄</div>
+  </div>
+
+  <div class="market-container">
+    <div class="market-grid" id="marketGrid"></div>
+  </div>
+
+  <!-- FAB + Button -->
+  <div class="fab" onclick="showSellForm()">
+    <i class="fas fa-plus"></i>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fas fa-home"></i>Home</a>
+    <a href="my-plants.html" class="nav-item"><i class="fas fa-leaf"></i>My Plants</a>
+    <a href="community.html" class="nav-item"><i class="fas fa-users"></i>Community</a>
+    <div class="nav-item active"><i class="fas fa-shopping-basket"></i>FloraMart</div>
+    <a href="profile.html" class="nav-item"><i class="fas fa-user-circle"></i>Profile</a>
+  </nav>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="modal">
+    <div class="modal-content" style="position:relative;">
+      <span class="close-btn" onclick="hideDetailModal()">×</span>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+  <!-- Sell Form Modal -->
+  <div id="sellModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="hideSellModal()">×</span>
+      <h2 style="font-family:'Playfair Display',serif; color:var(--dark-green); margin-bottom:24px; text-align:center;">Add Your Plant to FloraMart 🌱</h2>
+      
+      <div class="sell-form">
+        <label>Plant Photo</label>
+        <input type="file" id="plantImageInput" accept="image/*" onchange="previewPlantImage(event)">
+        <img id="plantImagePreview" class="image-preview" alt="Preview">
+
+        <label>Name of the Plant</label>
+        <input type="text" id="plantName" placeholder="e.g. Fresh Thai Basil Bunch">
+
+        <label>Punch Line</label>
+        <input type="text" id="plantPunchline" placeholder="Super fragrant – perfect for your Sunday curry!">
+
+        <label>Cost (₹)</label>
+        <input type="number" id="plantPrice" placeholder="150">
+
+        <label>Area of Availability</label>
+        <input type="text" id="plantLocation" placeholder="Kukatpally, Hyderabad">
+
+        <label>Add to which section?</label>
+        <select id="plantSection">
+          <option value="community">Community Sales</option>
+          <option value="nursery">Nearby Nurseries</option>
+          <option value="ads">Hot Deals 🔥</option>
+          <option value="hydro">Hydroponics 💧</option>
+          <option value="barter">Barter Zone 🔄</option>
+        </select>
+
+        <label>Category</label>
+        <select id="plantCategory">
+          <option value="">Select Category</option>
+          <option value="Quickgrow">Quickgrow</option>
+          <option value="Heirloom">Heirloom</option>
+          <option value="Homegrown">Homegrown</option>
+          <option value="Organic">Organic</option>
+          <option value="Rare">Rare Find</option>
+          <option value="Hydro">Hydroponics</option>
+          <option value="Barter">Barter / Swap</option>
+        </select>
+
+        <label>Details about the plant (~100 words)</label>
+        <textarea id="plantDetails" placeholder="Describe the plant, its benefits, growing tips, etc..."></textarea>
+      </div>
+
+      <button onclick="submitPlantForm()" style="margin-top:24px; width:100%; padding:16px; background:var(--primary); color:white; border:none; border-radius:30px; font-weight:600; font-size:1.1rem;">Submit to FloraMart 🌿</button>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="hideCartModal()">×</span>
+      <h2 style="font-family:'Playfair Display',serif; color:var(--dark-green);" id="cartTitle">Reya's Green Cart 🛒🌿</h2>
+      <div id="cartItems"></div>
+      <div class="cart-total" id="cartTotal">Total: ₹0</div>
+      <div style="display:flex; gap:14px; margin-top:28px;">
+        <button onclick="clearCart()" style="flex:1; padding:16px; background:#fffaf0; color:var(--dark-green); border:2px solid #dcedc8; border-radius:30px; font-weight:600;">Clear Cart 😢</button>
+        <button onclick="proceedToCheckout()" class="btn-post">Checkout & Grow! 🌟</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB8VCNt8j5j8CTVpAKx6JP_KL7sC2-zuTI",
+      authDomain: "prasad-prasad.firebaseapp.com",
+      projectId: "prasad-prasad",
+      appId: "1:717181544551:web:0780889ae05aa41bbe0cc2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let currentUser = null;
+    let cart = [];
+    let selectedImageData = null;
+    const cartKeyPrefix = 'greentechCart_';
+
+    // All plants with long descriptions
+    const allItems = [
+      { 
+        id:1, section:"community", category:"produce", title:"Fresh Thai Basil Bunch", price:150, location:"Kukatpally", 
+        seller:"Reya Stacy", image:"https://res.cloudinary.com/hz3gmuqw6/image/upload/c_fill,q_auto,w_750/f_auto/wip-ed-alli--what-is-thai-basil-and-how-do-you-use-it-phpuNQTel", 
+        desc:"Super fragrant – perfect for your Sunday curry! 😋🌿", badge:"Homegrown",
+        longDesc: `Thai Basil (Ocimum basilicum var. thyrsiflora) is a vibrant culinary herb essential to Southeast Asian cuisine. Characterized by sturdy purple stems and narrow, serrated green leaves, it offers a distinct, bold flavor profile of anise and licorice with a spicy peppery finish.<br><br>Unlike sweet basil, Thai basil is heat-stable, maintaining its structural integrity and pungent aroma during high-heat stir-frying or simmering in curries. Cultivation requires full sun, well-draining soil, and consistent moisture, thriving particularly well in humid, tropical climates. Beyond its culinary utility, it is rich in antioxidants and essential oils, providing notable anti-inflammatory and antibacterial benefits.`
+      },
+      { 
+        id:2, section:"community", category:"produce", title:"Mint & Coriander Combo", price:100, location:"Uppal", 
+        seller:"Ananya Terrace", image:"https://static.wixstatic.com/media/58cf6b_7780a015d7c94e83aa168b2b3b2b4140~mv2.jpg/v1/fill/w_1000,h_667,al_c,q_85,usm_0.66_1.00_0.01/58cf6b_7780a015d7c94e83aa168b2b3b2b4140~mv2.jpg", 
+        desc:"Freshly picked – chutney time!", badge:"Organic",
+        longDesc: `The Mint & Coriander Combo is a classic pairing of two powerhouse herbs, widely prized for their refreshing aroma and culinary versatility. Coriander (Dhania) features delicate, parsley-like leaves with a citrusy, bright profile, while Mint (Pudina) is recognized by its textured, cooling leaves and sharp, menthol fragrance.<br><br>This combo is nutritionally dense, offering high levels of Vitamin C, K, and essential minerals. It is the fundamental base for traditional green chutneys, marinades, and garnishes in Indian cuisine. These herbs thrive in well-drained soil with partial shade and are excellent for aiding digestion and detoxification.`
+      },
+      { 
+        id:3, section:"community", category:"plants", title:"Golden Pothos Cuttings (8)", price:140, location:"Ameerpet", 
+        seller:"PlantMama", image:"https://i.insider.com/61d3628699a7690019de7252?width=700", 
+        desc:"Air-purifying vines – barter welcome!", badge:"Easy Peasy",
+        longDesc: `The Golden Pothos (Epipremnum aureum) is a resilient, trailing vine celebrated for its heart-shaped, waxy leaves with signature yellow variegation. Cuttings are the primary method for propagation, easily rooting in either water or well-draining soil. To ensure success, a cutting must include at least one node—the small brown bump where roots emerge.<br><br>This plant is exceptionally low-maintenance, thriving in a variety of lighting conditions, from low to bright indirect light. Beyond its aesthetic appeal, it is highly effective at purifying indoor air by removing toxins like formaldehyde. It is an ideal choice for both water-based glass displays and hanging planters.`
+      },
+      { 
+        id:4, section:"community", category:"tools", title:"Hand-painted Terracotta pot Set", price:580, location:"Banjara Hills", 
+        seller:"Haritha Art", image:"https://www.zwende.com/cdn/shop/files/1_42aa1e0b-a46f-44e8-aee8-baaa9b9bac58.jpg?v=1727331133&width=1080", 
+        desc:"Cute designs – your succulents will love them!", badge:"Handcrafted",
+        longDesc: `This Hand-painted Terracotta Pot Set combines traditional craftsmanship with functional garden art. Made from porous, natural clay, these pots provide excellent breathability, allowing air and moisture to reach plant roots and preventing root rot. Each piece is typically primed and decorated with weather-resistant acrylics, featuring intricate patterns ranging from tribal art to modern florals.<br><br>Beyond their aesthetic appeal, these pots are eco-friendly and biodegradable. The set usually includes varied sizes to accommodate different growth stages. To maintain their vibrant finish, it is best to keep them in shaded or indoor areas and use a gentle cloth for cleaning. They serve as perfect decorative accents for succulents, herbs, or indoor foliage.`
+      },
+      { 
+        id:5, section:"community", category:"seeds", title:"Heirloom Tomato Mix", price:120, location:"Secunderabad", 
+        seller:"SeedUncle", image:"https://m.media-amazon.com/images/I/71BSJeIVg8L._AC_UF1000,1000_QL80_.jpg", 
+        desc:"Sweet cherries & big beefsteaks – monsoon ready!", badge:"Heirloom",
+        longDesc: `The Heirloom Tomato Mix offers a diverse collection of non-hybridized, open-pollinated seeds prized for their superior flavor, vibrant colors, and unique shapes. This mix typically includes varieties like Cherokee Purple, Brandywine, and Green Zebra.<br><br>These plants are indeterminate, meaning they vine and produce fruit throughout the season. They thrive in full sun and nutrient-rich, well-draining soil. High in Lycopene and Vitamin C, they are culinary favorites for fresh salads and artisanal sauces.`
+      },
+      { 
+        id:20, section:"community", category:"tools", title:"DIY Vertical Garden Wall", price:1200, location:"Dilsukhnagar", 
+        seller:"GreenWall", image:"https://hips.hearstapps.com/clv.h-cdn.co/assets/15/19/how-to-make-a-vertical-garden-feature-1_large.jpg?crop=1.00xw:0.904xh;0,0.0308xh", 
+        desc:"Turn your balcony into a green jungle!", badge:"Trending",
+        longDesc: `A DIY Vertical Garden Wall is an innovative solution for maximizing greenery in small spaces like balconies or patios. Constructed using a modular frame or repurposed materials like wooden pallets, felt pockets, or PVC pipes, it allows plants to grow upward. This system requires a sturdy mounting structure and a reliable irrigation method, often utilizing a drip system to ensure even hydration.<br><br>Ideal for herbs, succulents, and ferns, vertical walls improve air quality and provide natural insulation. Success depends on selecting plants with similar light and water requirements and using a lightweight, well-draining potting mix to reduce structural strain. Regular pruning and nutrient supplementation are essential to maintain the wall's lush, vibrant appearance.`
+      },
+      { 
+        id:25, section:"community", category:"seeds", title:"Microgreens Mix (Radish, Mustard, Fenugreek)", price:280, location:"Balkampet", 
+        seller:"MicroGreen", image:"https://www.allthatgrows.in/cdn/shop/articles/Feat_Image-Microgreens.jpg?v=1622026375", 
+        desc:"Harvest in 8 days – super nutritious!", badge:"Quick Grow",
+        longDesc: `The Microgreens Mix featuring Radish, Mustard, and Fenugreek is a nutritional powerhouse designed for rapid harvesting, typically within 7 to 14 days. These "vegetable confetti" are harvested at the cotyledon stage, where they contain up to 40 times more nutrients than their mature counterparts.<br><br>The flavor profile is complex: Radish adds a sharp peppery crunch, Mustard provides a zesty heat, and Fenugreek contributes a subtle, nutty bitterness. Cultivation is straightforward, requiring only a shallow tray, a thin layer of coco-peat, and bright indirect light. They are highly valued in culinary settings as a gourmet garnish for salads, sandwiches, and avocado toast, offering high concentrations of Vitamin A, C, and K.`
+      },
+      { 
+        id:6, section:"nursery", category:"plants", title:"Variegated Monstera (Medium)", price:2200, location:"Gachibowli (5 km)", 
+        seller:"Green Haven", image:"https://plantsguru.com/cdn/shop/files/Monstera_Deliciosa_Swiss_Cheese_Plant.jpg?v=1756377815", 
+        desc:"Wow-factor plant – pickup today!", badge:"Rare Find",
+        longDesc: `The Variegated Monstera (Monstera deliciosa 'Albo Borsigiana') is a highly coveted tropical plant renowned for its striking white or cream splashes, sectors, and marbling. This variegation is a genetic mutation that reduces chlorophyll, making the plant grow slower than its all-green counterpart. Because the white areas cannot photosynthesize, it requires bright, indirect light to maintain its patterns. Thriving in high humidity and well-draining, chunky aroid mix, it benefits from a moss pole for support. It is a premium statement piece that effectively purifies air, though it remains toxic to pets.`
+      },
+      { 
+        id:7, section:"nursery", category:"plants", title:"Fiddle Leaf Fig (Large)", price:2800, location:"Madhapur (3 km)", 
+        seller:"Urban Jungle", image:"https://d3gkbidvk2xej.cloudfront.net/images/products/feda972b-ba57-4627-b47f-745e49d7989c/s/fiddle-leaf-fig-tree-xxl.jpeg", 
+        desc:"Lush tropical vibes for your living room", badge:"Statement",
+        longDesc: `The Fiddle Leaf Fig (Ficus lyrata) is the ultimate interior design statement, known for its large, waxy, violin-shaped leaves and upright growth. In its large form, it can reach heights of 6 to 10 feet indoors, acting as a living sculpture. It thrives in bright, filtered light; inconsistent light often leads to leaf drop.<br><br>Proper care requires a "less is more" approach to watering—only hydrate when the top two inches of soil are dry. Because the broad leaves collect dust, regular wiping is essential for optimal photosynthesis.`
+      },
+      { 
+        id:8, section:"nursery", category:"plants", title:"Peace Lily (Blooming)", price:550, location:"Hitech City", 
+        seller:"PureAir", image:"https://m.media-amazon.com/images/I/61M5cotkK+L._AC_UF1000,1000_QL80_.jpg", 
+        desc:"Cleans air + beautiful white flowers", badge:"Air Purifier",
+        longDesc: `The Peace Lily (Spathiphyllum) is a graceful indoor plant famous for its glossy, lance-shaped leaves and elegant white "flowers," which are actually modified leaves called spathes. It is one of the top NASA-certified air purifiers, effectively removing toxins like benzene and formaldehyde.<br><br>It thrives in low to medium indirect light and is known for being "expressive"—its leaves visibly droop when it needs water. Keep the soil consistently moist but never waterlogged.`
+      },
+     
+      { 
+        id:9, section:"nursery", category:"seeds", title:"Mixed Flower Seeds (Zinnia, Cosmos, Marigold)", price:150, location:"Kukatpally Market", 
+        seller:"Bloom Seeds", image:"https://organicbazar.net/cdn/shop/files/ZinniaTallDoubleMixFlowerSeeds_ZinniaSeeds_MixColorZinnia_OrganicbazarFlowerSeeds.jpg?v=1757748203", 
+        desc:"Rainbow blooms all summer!", badge:"Color Bomb",
+        longDesc: `The Mixed Flower Seeds pack featuring Zinnia, Cosmos, and Marigold is a "sun-lover’s" toolkit designed for vibrant, low-maintenance landscapes. This trio is curated for successive blooming, ensuring a riot of color from mid-summer through late autumn. Zinnias provide bold, pom-pom shapes; Cosmos offer airy, fern-like foliage with delicate petals; and Marigolds bring dense, pest-repellent orange and yellow globes. These varieties are pollinator magnets, attracting bees and butterflies to your garden. They thrive in full sun and well-draining soil, showing remarkable drought tolerance once established. Ideal for beginner gardeners, they are easy to direct-sow and benefit. Their varying heights make them perfect for layered borders or cheerful cut-flower arrangements.`
+      },
+      {
+        id:10, section:"nursery", category:"tools", title:"Self-Watering Pots (Set of 5)", price:850, location:"Jubilee Hills", 
+        seller:"SmartGarden", image:"https://m.media-amazon.com/images/I/61pzfQbi-xL._AC_UF894,1000_QL80_.jpg", 
+        desc:"No more forgetting to water!", badge:"Beginner Friendly",
+        longDesc: `Self-Watering Pots are a revolutionary solution for modern gardeners, featuring a dual-chamber design that includes a water reservoir at the base. Using a capillary action system—often via a wick or a perforated divider—the plant draws up moisture into the soil as needed, mimicking natural ground-water absorption.  They are particularly beneficial for moisture-loving plants like ferns and peace lilies. By watering from the bottom, they also help maintain soil nutrients that are often leached away during top-watering.`
+      },
+
+      // Hot Deals (Sponsored)
+      { 
+        id:11, section:"ads", category:"pesticides", title:"Neem Oil + Soap Spray Kit", price:220, location:"Sponsored", 
+        seller:"Organic Shield", image:"https://iffcourbangardens.com/cdn/shop/files/DrNeemOil.jpg?v=1701408280", 
+        desc:"Natural bug buster – 30% off for Greentech!", badge:"Deal Alert",
+        longDesc: `The Neem Oil + Soap Spray Kit is an essential organic pest-management solution for eco-conscious gardeners. Cold-pressed neem oil serves as a powerful bio-pesticide, disrupting the life cycles of over 200 species, To use, dilute the concentrates in the provided spray bottle and apply during early morning or evening to avoid leaf scorch from the sun. This biodegradable kit is non-toxic to birds and mammals, making it a safe alternative to chemical sprays. It also functions as a fungicide, helping to manage powdery mildew and rust while keeping foliage glossy and healthy.`
+      },
+      { 
+        id:12, section:"ads", category:"fertilizers", title:"Vermicompost 10kg", price:450, location:"Sponsored", 
+        seller:"EarthWorms Co.", image:"https://organicbazar.net/cdn/shop/files/vermicompost_10_kg_Organic_Bazar_fertilizer_organic_fertilizers_vermi_compost_kenchua_khaad_vermicompost_5kg.jpg?v=1767868495&width=1946", 
+        desc:"Black gold – free delivery in Hyd!", badge:"Organic Power",
+        longDesc: `Vermicompost is a premium organic fertilizer produced through the decomposition of organic matter by specific earthworm species, primarily Red Wigglers. Often called "Black Gold," It provides a slow-release source of Nitrogen, Phosphorus, and Potassium (N-P-K), promoting vigorous root development and disease resistance. To use, top-dress your pots or mix it into the soil at a 1:4 ratio. Because it is entirely natural, making it perfect for everything from succulents to heavy-feeding vegetables. It’s a sustainable choice that recycles waste into a potent growth booster.`
+      },
+      { 
+        id:13, section:"ads", category:"tools", title:"Full-Spectrum LED Grow Light 30W", price:950, location:"Sponsored", 
+        seller:"GrowEasy", image:"https://m.media-amazon.com/images/I/715Lfh3kCYL._AC_UF1000,1000_QL80_.jpg", 
+        desc:"Indoor plants thriving even in monsoon!", badge:"Best Seller",
+        longDesc: `Full-Spectrum LED Grow Lights are engineered to mimic natural sunlight, providing a balanced range of wavelengths from cool blue to warm red, and often including UV and IR. Unlike traditional bulbs, LEDs are highly energy-efficient, produce minimal heat, and have a lifespan exceeding 50,000 hours. These lights are essential for indoor gardening in low-light urban spaces or during monsoon seasons.  By optimizing Photosynthetically Active Radiation (PAR), they ensure consistent yields year-round without the risk of leaf scorch.`
+      },
+
+       // Hydroponics
+      { 
+        id:14, section:"hydro", category:"hydro", title:"NFT Hydro System (8 Plants)", price:3200, location:"Online", 
+        seller:"AquaGrow", image:"https://m.media-amazon.com/images/I/41RlASdfDNL._AC_UF1000,1000_QL80_.jpg", 
+        desc:"Grow lettuce & herbs without soil – so cool!", badge:"Hydro Magic",
+        longDesc: `Nutrient Film Technique (NFT) is a hydroponic method where a shallow stream of nutrient-rich water recirculates through slanted channels. Gravity moves the solution from a reservoir past the roots, providing constant hydration and vital oxygenation without heavy growing media. Ideal for fast-growing greens like lettuce and herbs, it is water-efficient and scalable. However, success depends on a reliable pump, as power failures can quickly dry out the roots.`
+      },
+      { 
+        id:15, section:"hydro", category:"hydro", title:"pH + TDS Meter Combo", price:1400, location:"Online", 
+        seller:"HydroTools", image:"https://m.media-amazon.com/images/I/71NmD+-STnS._AC_UF1000,1000_QL80_.jpg", 
+        desc:"Keep your nutrients perfect – no guesswork!", badge:"Must-Have",
+        longDesc: `The pH + TDS Meter Combo is a vital diagnostic tool for hydroponics, ensuring optimal nutrient uptake. The pH meter monitors acidity (5.5–6.5) to prevent nutrient lockout, while the TDS meter measures mineral concentration in PPM to avoid over-fertilizing. Both devices feature Automatic Temperature Compensation (ATC) for accuracy and digital screens for easy reading. Regular calibration is essential for maintaining precision, directly impacting root health and crop yield.`
+      },
+      { 
+        id:16, section:"hydro", category:"seeds", title:"Hydro Lettuce & Herb Seed Kit", price:420, location:"Online", 
+        seller:"AquaSeeds", image:"https://m.media-amazon.com/images/I/81o75hOsAUL.jpg", 
+        desc:"Ready in 40 days – fresh salads forever!", badge:"Hydro Starter",
+         longDesc: `The Hydro Lettuce & Herb Seed Kit features fast-growing, high-yield varieties like Romaine, Arugula, and Basil, specifically bred for soil-less environments. These compact plants thrive in nutrient-rich water with a pH of 5.5–6.5. Harvest maturity is reached in 3–6 weeks. As "cut-and-come-again" crops, they provide a continuous, year-round supply of pesticide-free greens rich in Vitamins A and K. Ideal for indoor hydroponic systems.`
+      },
+
+      // Barter Zone
+      { 
+        id:17, section:"barter", category:"barter", title:"Aloe Vera Pups (12+)", price:"Barter", location:"Uppal", 
+        seller:"AloeQueen", image:"data:image/jpeg;base64,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", 
+        desc:"Healing babies – swap for other succulents!", badge:"Swap",
+        longDesc: `Aloe Vera Pups are baby offsets that sprout from a mature mother plant, sharing its identical DNA. These clones emerge once the parent is established, offering a reliable way to expand your garden. To propagate, wait until pups reach 3–4 inches with independent roots. Separate carefully and plant in a well-draining succulent mix under bright, indirect light. These medicinal plants are prized for their antioxidant-rich gel, ideal for skin hydration and burn relief.`
+      },
+      { 
+        id:18, section:"barter", category:"barter", title:"Ficus Bonsai Starter", price:"Barter", location:"Himayatnagar", 
+        seller:"MiniTree", image:"https://bonsaihaat.in/wp-content/uploads/2021/12/IMG_20231123_154832.png", 
+        desc:"Tiny tree project – trade for pots/tools!", badge:"Bonsai",
+        longDesc: `The Ficus Bonsai Starter is a resilient, fast-growing choice for beginners, famous for its "pot-bellied" trunk and unique aerial roots. These indoor-friendly plants thrive in bright, indirect light and warm temperatures. Maintenance is simple: use a "soak and dry" watering method and prune back to two leaves for every four grown. This air-purifying species offers year-round greenery and remarkable tolerance for low humidity.`
+      },
+      { 
+        id:19, section:"barter", category:"barter", title:"Rose Cuttings (Red & Pink)", price:"Barter", location:"LB Nagar", 
+        seller:"RoseLover", image:"https://www.bloomingbackyard.com/wp-content/uploads/2022/02/propagate-roses-collage.jpg", 
+        desc:"Fragrant blooms – swap for flowering plants!", badge:"Barter",
+        longDesc: `Rose Cuttings in classic Red and Pink are 6-to-8-inch semi-hardwood stems perfect for propagation. Red varieties offer deep fragrance, while Pink roses provide a softer, graceful scent. To root, dip ends in rooting hormone and plant in a well-draining sand-peat mix. Provide bright, indirect light and high humidity, keeping the medium moist but not soggy. Once established, these cuttings become hardy, perennial shrubs.`
+      },
+
+      // You can add more plants here following the same pattern
+
+      { 
+        id:21, section:"ads", category:"fertilizers", title:"Seaweed Extract Liquid 1L", price:420, location:"Sponsored", 
+        seller:"OceanGrow", image:"https://katyayanikrishidirect.com/cdn/shop/files/Seaweed_Liquid_1.webp?v=1750320719", 
+        desc:"Plants go crazy for this – natural boost!", badge:"Organic Magic",
+        longDesc: `Seaweed Extract Liquid is a premier organic biostimulant derived primarily from fermented brown algae like Ascophyllum nodosum. Unlike traditional N-P-K fertilizers, it acts as a "vitamin shot" for plants, These compounds accelerate cell division, leading to robust root systems and thicker foliage. Seaweed extract enhances a plant's resistance to "abiotic stress" such as drought, extreme heat, and transplant shock. Since it is highly concentrated, a small dose—typically 2-5 ml per liter of water—is sufficient for noticeable results every 15 days.`
+      },
+      { 
+        id:22, section:"hydro", category:"hydro", title:"Bubble Deep Water Culture Kit", price:4800, location:"Online", 
+        seller:"HydroMaster", image:"https://grozy.com.au/cdn/shop/files/W06.png?v=1721870059", 
+        desc:"Fast growth – roots love bubbles!", badge:"Advanced Hydro",
+        longDesc: `The Bubble Deep Water Culture (DWC) Kit is a high-efficiency system where roots are suspended in oxygenated, nutrient-rich water. An external air pump and stone create bubbles, saturating the solution with dissolved oxygen to prevent rot and fuel explosive growth. Ideal for heavy feeders like tomatoes and peppers, this low-maintenance kit provides 24/7 nutrient access. Success requires maintaining a pH of 5.5–6.5 and monitoring water temperature.`
+      },
+      { 
+        id:23, section:"barter", category:"barter", title:"Spider Plant Babies (10+)", price:"Barter", location:"Miyapur", 
+        seller:"SpiderMom", image:"https://gardenerspath.com/wp-content/uploads/2022/02/How-to-Propagate-Spiderettes-Cover.jpg", 
+        desc:"Hanging cuties – swap for other trailers!", badge:"Swap",
+        longDesc: `Spider Plant Babies, or "spiderettes," are resilient offsets that dangle from mature plants. These natural air-purifiers effectively filter indoor pollutants like carbon monoxide and xylene, making them ideal for home environments. Propagating is simple: tuck babies into moist soil or root them in a glass of water until roots reach one inch. They thrive in bright, indirect light and are entirely pet-safe.`
+      }
+    ];
+
+    function getCartKey() {
+      if (!currentUser) return null;
+      const id = currentUser.uid || currentUser.email || 'guest';
+      return cartKeyPrefix + id;
+    }
+
+    function loadCart() {
+      const key = getCartKey();
+      if (!key) return;
+      const stored = localStorage.getItem(key);
+      cart = stored ? JSON.parse(stored) : [];
+      updateCartCount();
+    }
+
+    function saveCart() {
+      const key = getCartKey();
+      if (!key) return;
+      localStorage.setItem(key, JSON.stringify(cart));
+      updateCartCount();
+    }
+
+    function updateCartCount() {
+      const count = cart.length;
+      const el = document.getElementById('cartCount');
+      el.textContent = count;
+      el.style.display = count > 0 ? 'flex' : 'none';
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    window.addToCart = (item) => {
+      cart.push(item);
+      saveCart();
+      showToast(`${item.title} just joined your garden party! 🪴🎉`);
+    };
+
+    // Details Modal with corresponding long description
+    window.showDetail = (item) => {
+      const modal = document.getElementById('detailModal');
+      const content = document.getElementById('detailContent');
+
+      content.innerHTML = `
+        <img src="${item.image}" class="detail-image" alt="${item.title}">
+        <div class="detail-title">${item.title}</div>
+        <div class="detail-price">${typeof item.price === 'number' ? '₹' + item.price : item.price}</div>
+        <div class="detail-desc">${item.longDesc || item.desc}</div>
+        <div style="margin-top:32px; display:flex; gap:14px;">
+          <button onclick="addToCartFromDetail(${item.id}); hideDetailModal();" class="btn" style="background:#e8f5e9; color:var(--dark-green); flex:1;">Add to Cart 🛒</button>
+          <button onclick="hideDetailModal()" class="btn" style="background:var(--primary); color:white; flex:1;">Close</button>
+        </div>
+      `;
+      modal.style.display = 'flex';
+    };
+
+    window.addToCartFromDetail = (id) => {
+      const item = allItems.find(i => i.id === id);
+      if (item) addToCart(item);
+    };
+
+    window.hideDetailModal = () => document.getElementById('detailModal').style.display = 'none';
+
+    function renderItems(section) {
+      const grid = document.getElementById('marketGrid');
+      grid.innerHTML = '';
+      const filtered = allItems.filter(i => i.section === section);
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'market-card';
+        card.innerHTML = `
+          <img class="market-img" src="${item.image}" alt="${item.title}">
+          <span class="market-badge">${item.badge}</span>
+          <div class="market-info">
+            <div class="market-title">${item.title}</div>
+            <div class="market-desc">${item.desc}</div>
+            <div class="market-price">${typeof item.price === 'number' ? '₹'+item.price : item.price}</div>
+            <div class="market-location"><i class="fas fa-map-marker-alt"></i> ${item.location}</div>
+          </div>
+          <div class="market-actions">
+            <button class="btn btn-buy" onclick="showDetail(${JSON.stringify(item).replace(/"/g, '&quot;')})">Details 🌿</button>
+            <button class="btn btn-cart" onclick='addToCart(${JSON.stringify(item)})'>Add to Cart 🛒</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // + Button Form
+    window.showSellForm = () => {
+      document.getElementById('sellModal').style.display = 'flex';
+      document.getElementById('plantImagePreview').style.display = 'none';
+      document.getElementById('plantImageInput').value = '';
+      document.getElementById('plantName').value = '';
+      document.getElementById('plantPunchline').value = '';
+      document.getElementById('plantPrice').value = '';
+      document.getElementById('plantLocation').value = '';
+      document.getElementById('plantSection').value = 'community';
+      document.getElementById('plantCategory').value = '';
+      document.getElementById('plantDetails').value = '';
+      selectedImageData = null;
+    };
+
+    window.hideSellModal = () => document.getElementById('sellModal').style.display = 'none';
+
+    window.previewPlantImage = function(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('plantImagePreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        selectedImageData = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    window.submitPlantForm = () => {
+      const name = document.getElementById('plantName').value.trim();
+      const punchline = document.getElementById('plantPunchline').value.trim();
+      const priceStr = document.getElementById('plantPrice').value.trim();
+      const location = document.getElementById('plantLocation').value.trim();
+      const section = document.getElementById('plantSection').value;
+      const category = document.getElementById('plantCategory').value;
+      const details = document.getElementById('plantDetails').value.trim();
+
+      if (!name || !punchline || !priceStr || !location || !section || !category || !details) {
+        alert("Please fill all fields before submitting 🌱");
+        return;
+      }
+
+      const price = parseInt(priceStr) || 0;
+
+      const newItem = {
+        id: Date.now(),
+        section: section,
+        category: "produce",
+        title: name,
+        price: price,
+        location: location,
+        seller: currentUser ? (currentUser.displayName || "You") : "New Seller",
+        image: selectedImageData || "https://via.placeholder.com/600x400/4CAF50/FFFFFF?text=Plant+Photo",
+        desc: punchline,
+        badge: category,
+        longDesc: details
+      };
+
+      allItems.unshift(newItem);
+      renderItems(section);
+
+      showToast(`✅ ${name} added to ${section === 'community' ? 'Community Sales' : section === 'nursery' ? 'Nearby Nurseries' : section === 'ads' ? 'Hot Deals' : section === 'hydro' ? 'Hydroponics' : 'Barter Zone'}! 🌿`);
+      hideSellModal();
+    };
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        renderItems(tab.dataset.section);
+      });
+    });
+
+    // Cart functions
+    window.showCartModal = () => {
+      const modal = document.getElementById('cartModal');
+      const itemsDiv = document.getElementById('cartItems');
+      const totalDiv = document.getElementById('cartTotal');
+      itemsDiv.innerHTML = '';
+      let total = 0;
+
+      if (cart.length === 0) {
+        itemsDiv.innerHTML = `<p style="text-align:center; padding:80px 20px; color:#6b8e6b; font-size:1.2rem;">Your cart is feeling lonely... let's fill it with green friends! 🪴💚</p>`;
+        totalDiv.textContent = 'Total: ₹0';
+      } else {
+        cart.forEach((item, i) => {
+          const price = typeof item.price === 'number' ? item.price : 0;
+          total += price;
+          itemsDiv.innerHTML += `
+            <div class="cart-item">
+              <img src="${item.image}" alt="${item.title}">
+              <div style="flex:1;">
+                <strong>${item.title}</strong><br>
+                <small style="color:var(--primary);">₹${price || 'Barter'}</small><br>
+                <small>${item.location}</small>
+              </div>
+              <button onclick="removeFromCart(${i})" style="color:#e53935; font-size:2rem; background:none; border:none; cursor:pointer;">×</button>
+            </div>`;
+        });
+        totalDiv.textContent = `Total: ₹${total.toLocaleString('en-IN')}`;
+      }
+      modal.style.display = 'flex';
+    };
+
+    window.hideCartModal = () => document.getElementById('cartModal').style.display = 'none';
+    window.clearCart = () => { if(confirm("Really clear your cart?")) { cart = []; saveCart(); showCartModal(); } };
+    window.proceedToCheckout = () => {
+      if (cart.length === 0) {
+        showToast("Add some goodies first – your plants are waiting! 🪴");
+        return;
+      }
+      const total = cart.reduce((sum, item) => sum + (typeof item.price === 'number' ? item.price : 0), 0);
+      localStorage.setItem('checkoutTotal', total);
+      localStorage.setItem('checkoutItems', JSON.stringify(cart));
+      window.location.href = 'checkout.html';
+    };
+
+    window.removeFromCart = (index) => {
+      const item = cart[index];
+      cart.splice(index, 1);
+      saveCart();
+      showCartModal();
+      showToast(`${item.title} said goodbye...`);
+    };
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        currentUser = user;
+        const name = user.displayName || user.email.split('@')[0];
+        document.getElementById('userDisplay').textContent = `Hey ${name.split(' ')[0]}! Shop till your garden drops! 🛍️`;
+        loadCart();
+        renderItems('community');
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>

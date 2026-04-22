@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Plant Details</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f8faf5;
+      color: #2e4d2e;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .back-btn { font-size: 1.6rem; cursor: pointer; }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+      gap: 30px;
+    }
+
+    @media (min-width: 768px) {
+      .main-content { flex-direction: row; padding: 40px 20px; }
+    }
+
+    .plant-image {
+      flex: 1;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+
+    .plant-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .details-panel {
+      flex: 1;
+      background: white;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+
+    .plant-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      color: #2e7d32;
+      margin-bottom: 8px;
+    }
+
+    .plant-type {
+      font-size: 1.1rem;
+      color: #4CAF50;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .detail-label {
+      color: #555;
+      font-weight: 500;
+    }
+
+    .detail-value {
+      color: #2e7d32;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .weather-alert {
+      background: #fff3e0;
+      border-left: 6px solid #FFB74D;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 24px 0;
+    }
+
+    .highlight-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 30px 0;
+    }
+
+    .tag {
+      background: #e8f5e9;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      color: #2e7d32;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .expert-links {
+      margin-top: 30px;
+    }
+
+    .expert-links h3 {
+      color: #2e7d32;
+      margin-bottom: 16px;
+    }
+
+    .expert-links a {
+      display: block;
+      padding: 12px;
+      background: #f8faf5;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #2e7d32;
+    }
+
+    .expert-links a:hover {
+      background: #e8f5e9;
+      padding-left: 20px;
+    }
+
+    .back-to-plants {
+      text-align: center;
+      margin: 40px 0 20px;
+    }
+
+    .back-to-plants button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 14px 40px;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="back-btn" onclick="window.location.href='my-plants.html'">
+      <i class="fas fa-arrow-left"></i>
+    </div>
+    <h1>Plant Details</h1>
+  </header>
+
+  <div class="main-content">
+
+    <!-- Left: Plant Image -->
+    <div class="plant-image" id="plantImageContainer"></div>
+
+    <!-- Right: Details -->
+    <div class="details-panel">
+      <div class="plant-name" id="plantName"></div>
+      <div class="plant-type" id="plantType"></div>
+
+      <div class="detail-row">
+        <div class="detail-label">Indoor/Outdoor Usage</div>
+        <div class="detail-value" id="indoorOutdoor"></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Sunlight Needed</div>
+        <div class="detail-value" id="sunlight"></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Best Time to Water</div>
+        <div class="detail-value" id="wateringTime"></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Fertilizer Recommendation</div>
+        <div class="detail-value" id="fertilizer"></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Special Feature</div>
+        <div class="detail-value" id="special"></div>
+      </div>
+
+      <!-- Weather Alert for Hyderabad -->
+      <div class="weather-alert" id="weatherAlert">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Highlight Tags -->
+      <div class="highlight-tags" id="highlightTags"></div>
+
+      <!-- Expert Articles -->
+      <div class="expert-links">
+        <h3>Expert Care Guides</h3>
+        <div id="expertLinks"></div>
+      </div>
+
+      <div class="back-to-plants">
+        <button onclick="window.location.href='my-plants.html'">Back to My Plants</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const plantId = parseInt(urlParams.get('id')) || 1;
+
+    const plantDatabase = {
+      1: {  // Monstera Deliciosa
+        name: "Monstera Deliciosa",
+        type: "Indoor • Tropical",
+        image: "https://budsnblush.com/cdn/shop/articles/MonsteraDeliciosa.jpg?v=1732444684",
+        indoorOutdoor: "Indoor",
+        sunlight: "4–6 hours bright indirect light",
+        wateringTime: "Morning (every 7–10 days)",
+        fertilizer: "Balanced liquid fertilizer (NPK 20-20-20) every 4 weeks in growing season",
+        special: "Air Purifying & Climbing Vine",
+        weatherAlert: "In Hyderabad summer, increase misting due to dry heat. During monsoon, reduce watering to avoid root rot.",
+        highlights: ["Fenestrated Leaves", "Low Maintenance", "Air Purifier"],
+        expertLinks: [
+          { text: "The Spruce – Monstera Care Guide", url: "https://www.thespruce.com/growing-monstera-plants-1902774" },
+          { text: "RHS Official Monstera Guide", url: "https://www.rhs.org.uk/plants/monstera" }
+        ]
+      },
+      2: {  // Sweet Basil
+        name: "Sweet Basil",
+        type: "Herbs • Edible",
+        image: "https://images.squarespace-cdn.com/content/v1/568c04dccbced67dd8ae3a26/1590077418581-00MGTWMG5BBJV76TCMOX/Sweet+Basil+by+A+Certain+Aesthetic",
+        indoorOutdoor: "Indoor / Outdoor",
+        sunlight: "6–8 hours direct sunlight",
+        wateringTime: "Morning (every 2–3 days)",
+        fertilizer: "Organic liquid fertilizer (fish emulsion) every 15 days",
+        special: "Culinary Herb & Mosquito Repellent",
+        weatherAlert: "Hyderabad summer: Water twice daily if in full sun. Monsoon: Protect from heavy rain to prevent fungal issues.",
+        highlights: ["Aromatic Leaves", "Fast Growing", "Edible"],
+        expertLinks: [
+          { text: "Gardening Know How – Basil Care", url: "https://www.gardeningknowhow.com/edible/herbs/basil/growing-basil.htm" }
+        ]
+      },
+      3: {  // Snake Plant
+        name: "Snake Plant",
+        type: "Indoor • Low Light",
+        image: "https://plantsguru.com/cdn/shop/files/Sansevieria_Golden_Long_-_Snake_Plant.jpg?v=1746087730&width=1500",
+        indoorOutdoor: "Indoor",
+        sunlight: "Low to medium indirect light",
+        wateringTime: "Morning (every 2–3 weeks)",
+        fertilizer: "Succulent fertilizer (NPK 10-10-10) once every 2 months",
+        special: "Extremely Drought Tolerant",
+        weatherAlert: "In Hyderabad winter, water even less. Monsoon: Ensure excellent drainage to prevent root rot.",
+        highlights: ["Hard to Kill", "Air Purifying", "NASA Approved"],
+        expertLinks: [
+          { text: "The Spruce – Snake Plant Care", url: "https://www.thespruce.com/snake-plant-care-overview-1902774" }
+        ]
+      }
+    };
+
+    const plant = plantDatabase[plantId] || plantDatabase[1];
+
+    // Fill page
+    document.getElementById('plantImageContainer').innerHTML = `<img src="${plant.image}" alt="${plant.name}">`;
+    document.getElementById('plantName').textContent = plant.name;
+    document.getElementById('plantType').textContent = plant.type;
+
+    document.getElementById('indoorOutdoor').textContent = plant.indoorOutdoor;
+    document.getElementById('sunlight').textContent = plant.sunlight;
+    document.getElementById('wateringTime').textContent = plant.wateringTime;
+    document.getElementById('fertilizer').textContent = plant.fertilizer;
+    document.getElementById('special').textContent = plant.special;
+
+    // Weather Alert
+    document.getElementById('weatherAlert').innerHTML = `
+      <strong>Hyderabad Weather Tip:</strong><br>
+      ${plant.weatherAlert}
+    `;
+
+    // Highlight Tags
+    const tagsContainer = document.getElementById('highlightTags');
+    plant.highlights.forEach(text => {
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.innerHTML = `<i class="fas fa-check-circle"></i> ${text}`;
+      tagsContainer.appendChild(tag);
+    });
+
+    // Expert Links
+    const linksContainer = document.getElementById('expertLinks');
+    plant.expertLinks.forEach(link => {
+      const a = document.createElement('a');
+      a.href = link.url;
+      a.target = "_blank";
+      a.textContent = link.text;
+      linksContainer.appendChild(a);
+    });
+  </script>
+
+</body>
+</html>

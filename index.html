@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GreenTech</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body {
+  height:100vh;
+  color:white;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(16,60,45,0.75),rgba(15,35,29,0.75)),
+    url("https://www.kingsseeds.co.nz/cdn/shop/articles/Beginners_Guide_to_Growing.png?v=1687831051&width=1100");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+  position:relative;
+}
+
+body::before {
+  content:"";
+  position:absolute;
+  width:500px;
+  height:500px;
+  background:radial-gradient(circle,#52b78866,transparent);
+  filter:blur(120px);
+  top:-120px;
+  left:-120px;
+  animation:moveGlow 10s infinite alternate;
+}
+
+@keyframes moveGlow {
+  from { transform:translateY(0); }
+  to   { transform:translateY(60px); }
+}
+
+nav {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 40px;
+  background:rgba(0,0,0,0.25);
+  backdrop-filter:blur(12px);
+}
+
+.logo {
+  font-size:24px;
+  font-weight:600;
+}
+
+nav button {
+  margin-left:12px;
+  padding:10px 18px;
+  border:none;
+  border-radius:25px;
+  background:linear-gradient(135deg,#74c69d,#2d6a4f);
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+nav button:hover {
+  transform:scale(1.08);
+  box-shadow:0 6px 15px rgba(116,198,157,0.5);
+}
+
+.page {
+  display:none;
+  height:calc(100vh - 80px);
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  text-align:center;
+  padding:20px;
+}
+
+.active { display:flex; }
+
+.content { max-width:700px; width: 100%; }
+
+h1 { font-size:48px; margin-bottom:20px; }
+p { font-size:18px; opacity:0.9; margin-bottom:25px; }
+
+.main-btn {
+  padding:14px 45px;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+  background:linear-gradient(135deg,#95d5b2,#2d6a4f);
+  color:white;
+  font-weight: 600;
+  transition:0.3s;
+}
+
+.main-btn:hover {
+  transform:scale(1.05);
+  box-shadow:0 10px 25px rgba(45,106,79,0.4);
+}
+
+.input-field {
+  width:100%;
+  max-width:450px; /* Increased length as requested */
+  padding:18px 25px;
+  margin:10px 0;
+  border:none;
+  border-radius:40px;
+  font-size:16px;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  backdrop-filter:blur(10px);
+}
+
+.input-field::placeholder {
+  color:rgba(255,255,255,0.8);
+}
+
+.input-field:focus {
+  outline:none;
+  background:rgba(255,255,255,0.25);
+}
+
+.form-group {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width: 100%;
+}
+
+.lock-icon {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+  fill: white;
+}
+
+#message { height:20px; font-size:14px; margin-top:5px; }
+
+.plant {
+  font-size:70px;
+  margin-bottom:10px;
+  animation:bounce 2s infinite;
+}
+
+.community-icon {
+  font-size:70px;
+  margin-bottom:10px;
+  animation:bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%,100% { transform:translateY(0); }
+  50%     { transform:translateY(-10px); }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <div class="logo">🌿 GreenTech</div>
+  <div>
+    <button onclick="showPage('home')">Home</button>
+    <button onclick="showPage('plants')">Plants</button>
+    <button onclick="showPage('care')">Care</button>
+    <button onclick="showPage('community')">Community</button>
+    <button onclick="showPage('about')">About</button>
+  </div>
+</nav>
+
+<div id="home" class="page active">
+  <div class="content">
+    <div class="plant">🌱</div>
+    <h1>Grow Your Green World</h1>
+    <p>Premium plant care experience designed to make nature part of your lifestyle.</p>
+    <div style="display:flex; gap:25px; justify-content:center; margin-top:30px;">
+      <button class="main-btn" onclick="showPage('getStarted')">Sign Up</button>
+      <button class="main-btn" onclick="showPage('login')">Login</button>
+    </div>
+  </div>
+</div>
+
+<div id="getStarted" class="page">
+  <div class="content">
+    <h1>Create Account</h1>
+    <div class="form-group">
+      <input id="su-name" type="text" placeholder="Login Name" class="input-field" autocomplete="off">
+      <input id="su-email" type="email" placeholder="Email" class="input-field" autocomplete="off">
+      <input id="password" type="password" placeholder="Password" class="input-field" autocomplete="new-password" onkeyup="checkPassword()">
+      <input id="repassword" type="password" placeholder="Re-enter Password" class="input-field" autocomplete="new-password" onkeyup="checkPassword()">
+      <div id="message"></div>
+      <button id="submitBtn" class="main-btn" style="display:none;" onclick="signup()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<div id="login" class="page">
+  <div class="content">
+    <svg class="lock-icon" viewBox="0 0 24 24">
+        <path d="M18,8H17V6A5,5 0 0,0 12,1A5,5 0 0,0 7,6V8H6A2,2 0 0,0 4,10V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V10A2,2 0 0,0 18,8M9,6A3,3 0 0,1 12,3A3,3 0 0,1 15,6V8H9V6M18,20H6V10H18V20M12,13A2,2 0 0,0 10,15A2,2 0 0,0 12,17A2,2 0 0,0 14,15A2,2 0 0,0 12,13Z" />
+    </svg>
+    <h1>Login</h1>
+    <div class="form-group">
+      <input id="li-email" type="email" placeholder="Email" class="input-field" autocomplete="off">
+      <input id="li-pass" type="password" placeholder="Password" class="input-field" autocomplete="current-password" value="">
+      <button class="main-btn" onclick="login()" style="margin-top: 15px;">Login</button>
+    </div>
+  </div>
+</div>
+
+<div id="plants" class="page">
+  <div class="content">
+    <div class="plant">🪴</div>
+    <h1>Our Plants</h1>
+    <p>Discover a wide variety of beautiful indoor and outdoor plants.</p>
+    <p>Coming soon — curated collections for every space and season.</p>
+  </div>
+</div>
+
+<div id="care" class="page">
+  <div class="content">
+    <div class="plant">💧🌞🔍</div>
+    <h1>Plant Care Guide</h1>
+    <p>Expert tips on watering, lighting, soil, pruning and troubleshooting.</p>
+    <p>Keep your green friends happy and thriving — guides coming soon.</p>
+  </div>
+</div>
+
+<div id="community" class="page">
+  <div class="content">
+    <div class="community-icon">🤝</div>
+    <h1>Your Plant Tribe Awaits</h1>
+    <p>A cozy corner of green souls swapping cuttings, memes,</p>
+    <p>and midnight watering confessions under the same virtual moonlight.</p>
+  </div>
+</div>
+
+<div id="about" class="page">
+  <div class="content">
+    <div class="plant">🌎</div>
+    <h1>About GreenTech</h1>
+    <p>We're passionate about bringing nature into modern homes.</p>
+    <p>Sustainable living • Simple care • Beautiful results</p>
+  </div>
+</div>
+
+<script>
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+
+  if(id === "getStarted"){
+    document.getElementById("su-name").value = "";
+    document.getElementById("su-email").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("repassword").value = "";
+    document.getElementById("message").textContent = "";
+    document.getElementById("submitBtn").style.display = "none";
+  }
+  // Added to ensure login password is clear when page switches
+  if(id === "login"){
+    document.getElementById("li-pass").value = "";
+  }
+}
+
+function checkPassword(){
+  const pass = document.getElementById("password").value;
+  const repass = document.getElementById("repassword").value;
+  const submitBtn = document.getElementById("submitBtn");
+  const message = document.getElementById("message");
+
+  if(!pass && !repass){
+    message.textContent = "";
+    submitBtn.style.display = "none";
+  }
+  else if(pass === repass && pass !== ""){
+    message.style.color = "lightgreen";
+    message.textContent = "Passwords Match ✓";
+    submitBtn.style.display = "block";
+  }
+  else{
+    message.style.color = "#ff6b6b";
+    message.textContent = "Passwords Do Not Match ✗";
+    submitBtn.style.display = "none";
+  }
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { 
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile
+} from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+// 1. Import Firestore
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB8VCNt8j5j8CTVpAKx6JP_KL7sC2-zuTI",
+  authDomain: "prasad-prasad.firebaseapp.com",
+  projectId: "prasad-prasad",
+  appId: "1:717181544551:web:0780889ae05aa41bbe0cc2"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app); // Initialize Database
+
+window.signup = async function(){
+  const email = document.getElementById("su-email").value.trim();
+  const name = document.getElementById("su-name").value.trim();
+  const pass = document.getElementById("password").value;
+
+  try {
+    // Create User in Firebase Auth
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+
+    // Update Auth Profile
+    await updateProfile(cred.user, { displayName: name });
+
+    // 2. Add User to the "GreenTech Community" in Firestore
+    // Using setDoc with cred.user.uid ensures the user only has ONE entry in this community
+    await setDoc(doc(db, "communities", "GreenTech_Community", "members", cred.user.uid), {
+      username: name,
+      email: email,
+      joinedAt: serverTimestamp()
+    });
+
+    alert("✅ Account Created & Added to GreenTech Community!");
+    showPage('login');
+  } catch(err) {
+    alert("Error: " + err.message);
+  }
+}
+
+window.login = async function(){
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      document.getElementById("li-email").value.trim(),
+      document.getElementById("li-pass").value
+    );
+    window.location.href = "home.html";
+  } catch(err) {
+    alert("Login failed: " + err.message);
+  }
+}
+</script>
+
+</body>
+</html>

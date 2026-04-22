@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Privacy & Security</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      padding: 22px 20px;
+      border-radius: 0 0 28px 28px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(46,125,50,.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 20px;
+      font-size: 1.6rem;
+      cursor: pointer;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 560px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+    }
+
+    .section h2 {
+      color: var(--dark-green);
+      font-size: 1.35rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section p, .section li {
+      line-height: 1.7;
+      color: #444;
+      margin-bottom: 12px;
+    }
+
+    .section ul {
+      padding-left: 20px;
+    }
+
+    .highlight {
+      background: var(--mint);
+      padding: 16px;
+      border-radius: 16px;
+      border-left: 5px solid var(--primary);
+      margin: 16px 0;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 14px;
+      background: white;
+      color: var(--dark-green);
+      border: 2px solid var(--accent);
+      border-radius: 50px;
+      font-weight: 600;
+      margin-top: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .action-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .danger-btn {
+      background: #ffebee;
+      color: #c62828;
+      border-color: #ffcdd2;
+    }
+
+    .danger-btn:hover {
+      background: #c62828;
+      color: white;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 440px;
+      background: white;
+      border-radius: 30px;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      box-shadow: 0 14px 38px rgba(0,0,0,.14);
+      z-index: 100;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #6b8e6b;
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: .3s;
+      flex: 1;
+    }
+
+    .nav-item i {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .nav-item:hover { transform: translateY(-5px); color: var(--dark-green); }
+    .nav-item.active { color: var(--dark-green); font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="back-btn" onclick="window.history.back()">
+      <i class="fas fa-arrow-left"></i>
+    </div>
+    <h1>Privacy & Security</h1>
+  </header>
+
+  <div class="container">
+
+    <!-- Data Protection -->
+    <div class="section">
+      <h2><i class="fas fa-shield-alt"></i> Your Data is Protected</h2>
+      <p>We take your privacy seriously at Greentech. Your personal information and gardening journey are safe with us.</p>
+      
+      <div class="highlight">
+        <strong>What we collect:</strong><br>
+        • Name, email, and phone number<br>
+        • Garden photos and plant progress<br>
+        • Location (city only) for local community features<br>
+        • Gardening activity and badges
+      </div>
+    </div>
+
+    <!-- How We Use Data -->
+    <div class="section">
+      <h2><i class="fas fa-chart-line"></i> How We Use Your Information</h2>
+      <ul>
+        <li>To personalize your gardening experience and recommendations</li>
+        <li>To show relevant community posts and nearby nurseries</li>
+        <li>To award badges and track your progress</li>
+        <li>To send important updates about your plants</li>
+        <li>To improve the app based on usage (anonymously)</li>
+      </ul>
+    </div>
+
+    <!-- Security Features -->
+    <div class="section">
+      <h2><i class="fas fa-lock"></i> Security Features</h2>
+      <p>We use industry-standard encryption to protect your data:</p>
+      <ul>
+        <li>End-to-end encryption for sensitive data</li>
+        <li>Secure Firebase backend</li>
+        <li>Two-factor authentication available</li>
+        <li>Regular security audits</li>
+        <li>No selling of personal data to third parties</li>
+      </ul>
+    </div>
+
+    <!-- Your Rights -->
+    <div class="section">
+      <h2><i class="fas fa-user-shield"></i> Your Rights</h2>
+      <p>You have full control over your data:</p>
+      <button class="action-btn" onclick="alert('Download request initiated. You will receive your data via email shortly.')">
+        📥 Download My Data
+      </button>
+      <button class="action-btn" onclick="alert('We have received your request to delete your account and data. This process may take up to 30 days.')">
+        🗑️ Request Account Deletion
+      </button>
+    </div>
+
+    <!-- Contact -->
+    <div class="section">
+      <h2><i class="fas fa-envelope"></i> Questions or Concerns?</h2>
+      <p>If you have any questions about our privacy practices, feel free to reach out.</p>
+      <button class="action-btn" onclick="alert('Support team will contact you shortly at reya.stacy@example.com')">
+        Contact Privacy Team
+      </button>
+    </div>
+
+    <!-- Last Updated -->
+    <p style="text-align:center; color:#777; font-size:0.85rem; margin-top:30px;">
+      Last updated: March 2026
+    </p>
+
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="home.html" class="nav-item"><i class="fas fa-home"></i>Home</a>
+    <a href="my-plants.html" class="nav-item"><i class="fas fa-leaf"></i>My Plants</a>
+    <a href="community.html" class="nav-item"><i class="fas fa-users"></i>Community</a>
+    <a href="marketplace.html" class="nav-item"><i class="fas fa-store"></i>Marketplace</a>
+    <a href="profile.html" class="nav-item active"><i class="fas fa-user-circle"></i>Profile</a>
+  </nav>
+
+</body>
+</html>

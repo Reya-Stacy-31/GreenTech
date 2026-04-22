@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Greentech – Scan Plant</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #43a047;
+      --secondary: #66bb6a;
+      --accent: #a5d6a7;
+      --mint: #e8f5e9;
+      --text: #2e4a38;
+      --dark-green: #2e7d32;
+      --glass-bg: rgba(255,255,255,0.75);
+      --glass-border: rgba(163,214,167,0.4);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at 10% 20%, #e8f5e9 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, #c6e5b6 0%, transparent 40%),
+                  linear-gradient(135deg, #f6fff6, #fffaf2);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body.dark {
+      --mint: #1a3c34;
+      --text: #e0f0e0;
+      background: radial-gradient(circle at 10% 20%, #0f2f1f 0%, #000 100%);
+      color: #e0f0e0;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 20px;
+      background: linear-gradient(135deg, #4b9b4d, #bcfabf, #0c500f);
+      color: white;
+      box-shadow: 0 8px 24px rgba(46,125,50,.3);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-content {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .back-btn {
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover { transform: scale(1.15); }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.1rem;
+      margin: 0;
+      flex: 1;
+      text-align: center;
+    }
+
+    .scanner-container {
+      position: relative;
+      height: 60vh;
+      background: #000;
+      overflow: hidden;
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scan-frame {
+      width: 280px;
+      height: 280px;
+      border: 4px solid var(--primary);
+      border-radius: 24px;
+      box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+      position: relative;
+      animation: pulse 2s infinite;
+    }
+
+    .scan-frame::after {
+      content: '';
+      position: absolute;
+      top: -20px; left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: var(--primary);
+      box-shadow: 0 0 12px var(--primary);
+      animation: scan-line 3s infinite linear;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); }
+      50%      { box-shadow: 0 0 0 9999px rgba(0,0,0,0.65); }
+    }
+
+    @keyframes scan-line {
+      0% { top: -20px; }
+      100% { top: 100%; }
+    }
+
+    .controls {
+      padding: 24px 16px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--glass-border);
+      text-align: center;
+    }
+
+    .btn {
+      width: 100%;
+      max-width: 360px;
+      padding: 1.2rem;
+      margin: 12px auto;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 6px 20px rgba(67,160,71,0.2);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(67,160,71,0.35); }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover { background: rgba(67,160,71,0.08); }
+
+    .hidden { display: none !important; }
+
+    /* Result Screen */
+    .result-screen {
+      padding: 24px 16px;
+      background: var(--mint);
+    }
+
+    .plant-hero {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    .plant-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      color: var(--dark-green);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .confidence {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 24px;
+    }
+
+    .confidence-bar {
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 1.5s ease;
+      border-radius: 4px;
+    }
+
+    .info-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    .info-card h3 {
+      color: var(--dark-green);
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+    }
+
+    .info-card p, .info-card ul {
+      color: #424242;
+      line-height: 1.6;
+    }
+
+    .info-card ul {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    .disease-alert {
+      background: #fff3e0;
+      border-left: 6px solid #FFB74D;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+
+    .bottom-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 14px;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .save-btn { background: var(--primary); color: white; }
+    .expert-btn { background: var(--accent); color: var(--dark-green); }
+    .share-btn { background: #e0f0e0; color: var(--dark-green); }
+
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #fff;
+      border-top: 6px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+      .plant-title { font-size: 2rem; }
+      .scanner-container { height: 55vh; }
+      .bottom-actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="back-btn" onclick="window.history.back()">
+      <i class="fas fa-arrow-left"></i>
+    </div>
+    <h1>Scan Plant</h1>
+    <button onclick="document.body.classList.toggle('dark')" style="background:none;border:none;color:white;font-size:1.4rem;cursor:pointer;">
+      <i class="fas fa-moon"></i>
+    </button>
+  </header>
+
+  <!-- Scanner View -->
+  <div id="scannerView">
+    <div class="scanner-container">
+      <video id="video" autoplay playsinline></video>
+      <div class="overlay">
+        <div class="scan-frame"></div>
+      </div>
+      <div id="flash" class="hidden" style="position:absolute;inset:0;background:white;opacity:0;transition:opacity 0.2s;"></div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" id="captureBtn">
+        <i class="fas fa-camera"></i> Capture
+      </button>
+      <label class="btn btn-outline" for="fileInput">
+        <i class="fas fa-image"></i> Upload Photo
+      </label>
+      <input type="file" id="fileInput" accept="image/*" class="hidden">
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="spinner"></div>
+    <p>Analyzing Plant...</p>
+  </div>
+
+  <!-- Result View -->
+  <div id="resultView" class="hidden">
+    <div class="result-screen">
+      <img id="previewImg" class="plant-hero" src="" alt="Scanned Plant">
+
+      <h2 id="plantName" class="plant-title">Scanning...</h2>
+      <div id="confidence" class="confidence">
+        Confidence: <span id="confValue">0%</span>
+        <div class="confidence-bar"><div id="confFill" class="confidence-fill"></div></div>
+      </div>
+
+      <div class="info-card">
+        <h3>Care Tips</h3>
+        <p id="careTips">Bright indirect light • Water when top 2 cm soil is dry • Mist leaves regularly</p>
+      </div>
+
+      <!-- <div id="diseaseSection" class="hidden">
+        <div class="disease-alert">
+          <h3>Possible Issue Detected</h3>
+          <p id="diseaseResult">Leaf spot fungus – moderate risk</p>
+          <ul>
+            <li>Remove affected leaves</li>
+            <li>Improve air circulation</li>
+            <li>Apply neem oil weekly</li>
+          </ul>
+        </div>
+      </div> -->
+
+      <div class="bottom-actions">
+        <button class="action-btn save-btn" onclick="alert('Plant saved to My Plants!')">
+          <i class="fas fa-plus-circle"></i> Save to My Plants
+        </button>
+        <button class="action-btn expert-btn" onclick="alert('Opening expert chat...')">
+          <i class="fas fa-headset"></i> Ask Expert
+        </button>
+        <button class="action-btn share-btn" onclick="alert('Sharing plant result...')">
+          <i class="fas fa-share-alt"></i> Share
+        </button>
+      </div>
+
+      <button class="btn btn-outline" style="margin:24px auto; display:block;" onclick="resetScan()">
+        Scan Another Plant
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const captureBtn = document.getElementById('captureBtn');
+    const fileInput = document.getElementById('fileInput');
+    const flash = document.getElementById('flash');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+
+    // Start camera (back camera preferred)
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }
+        });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error("Camera error:", err);
+        alert("Camera access denied or unavailable. Please upload a photo instead.");
+      }
+    }
+
+    startCamera();
+
+    // Capture with flash effect
+    captureBtn.addEventListener('click', () => {
+      flash.classList.remove('hidden');
+      flash.style.opacity = '0.8';
+      setTimeout(() => {
+        flash.style.opacity = '0';
+        setTimeout(() => flash.classList.add('hidden'), 300);
+      }, 150);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      showResult(canvas.toDataURL('image/jpeg'));
+    });
+
+    // Upload fallback
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => showResult(ev.target.result);
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Show result with animation
+    function showResult(imageSrc) {
+      document.getElementById('scannerView').classList.add('hidden');
+      loadingOverlay.classList.remove('hidden');
+
+      setTimeout(() => {
+        loadingOverlay.classList.add('hidden');
+        document.getElementById('resultView').classList.remove('hidden');
+
+        const preview = document.getElementById('previewImg');
+        preview.src = imageSrc;
+
+        // Animate confidence
+        const confValue = document.getElementById('confValue');
+        const confFill = document.getElementById('confFill');
+        let percent = 0;
+        const target = Math.floor(Math.random() * 15) + 85; // 85–99%
+        const interval = setInterval(() => {
+          percent += 2;
+          confValue.textContent = `${percent}%`;
+          confFill.style.width = `${percent}%`;
+          if (percent >= target) {
+            clearInterval(interval);
+            confValue.textContent = `${target}%`;
+            confFill.style.width = `${target}%`;
+          }
+        }, 40);
+
+        // Fake results
+        document.getElementById('plantName').textContent = "Monstera Deliciosa";
+        document.getElementById('careTips').textContent =
+          "• Bright indirect light\n• Water when top 2–3 cm soil is dry\n• Mist leaves 2–3 times/week\n• Fertilize monthly in growing season";
+
+        // Random disease chance
+        if (Math.random() > 0.6) {
+          document.getElementById('diseaseSection').classList.remove('hidden');
+          document.getElementById('diseaseResult').textContent = "Mild leaf spot detected";
+        }
+      }, 1800); // fake processing time
+    }
+
+    function resetScan() {
+      document.getElementById('resultView').classList.add('hidden');
+      document.getElementById('scannerView').classList.remove('hidden');
+      document.getElementById('diseaseSection').classList.add('hidden');
+      document.getElementById('confidence').innerHTML = 'Confidence: <span id="confValue">0%</span><div class="confidence-bar"><div id="confFill" class="confidence-fill"></div></div>';
+    }
+  </script>
+
+</body>
+</html>
